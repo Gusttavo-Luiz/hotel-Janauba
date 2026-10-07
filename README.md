@@ -15,6 +15,16 @@ npm run preview    # serve o build localmente
 
 Publique o conteúdo de `dist/client` em qualquer hospedagem estática (Netlify, Vercel, Cloudflare Pages, Hostinger, Apache/Nginx…). Cada página é gerada como `rota/index.html`, e há um `404.html`.
 
+## Deploy na Vercel
+
+O `vercel.json` já define instalação, build, pasta publicada (`dist/client`), URLs sem `.html` e cabeçalhos de cache e segurança.
+
+1. Em [vercel.com/new](https://vercel.com/new), importe o repositório `Gusttavo-Luiz/hotel-Janauba` (branch `main`). Não altere as configurações de build.
+2. Clique em **Deploy**. A cada push na `main` o site é publicado de novo; cada PR ganha um link de pré-visualização.
+3. Quando tiver domínio próprio, adicione em **Settings → Domains** e defina `VITE_SITE_URL` em **Settings → Environment Variables** (Production). Depois faça um novo deploy.
+
+Sem `VITE_SITE_URL`, o build de produção usa o domínio `*.vercel.app` do projeto para canonical e `sitemap.xml`. Deploys de pré-visualização publicam um `robots.txt` que bloqueia a indexação.
+
 ## Variáveis de ambiente
 
 Copie `.env.example` para `.env` e preencha:
