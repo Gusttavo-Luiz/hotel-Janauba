@@ -31,8 +31,13 @@ for (const route of allRoutes) {
 }
 writePage('/404', path.join(clientDir, '404.html'));
 
+// Deploys de pré-visualização da Vercel não devem ser indexados.
+if (process.env.VERCEL_ENV === 'preview') {
+  fs.writeFileSync(path.join(clientDir, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
+  console.log('  ✓ robots.txt bloqueando indexação (deploy de pré-visualização)');
+}
 // sitemap.xml e robots.txt (apenas quando a URL pública estiver definida)
-if (siteConfig.url) {
+else if (siteConfig.url) {
   const today = new Date().toISOString().slice(0, 10);
   const urls = allRoutes
     .map((r) => `  <url><loc>${siteConfig.url}${r.path}</loc><lastmod>${today}</lastmod></url>`)
