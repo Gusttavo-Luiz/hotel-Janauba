@@ -1,0 +1,156 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-serif: 'Cormorant Garamond', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --color-ivory: #faf7f2;
+  --color-cream: #f3ede3;
+  --color-sand: #e7dccb;
+  --color-stone: #8a8174;
+  --color-stone-light: #b5ac9f;
+  --color-ink: #171614;
+  --color-ink-soft: #2a2724;
+  --color-graphite: #3d3934;
+  --color-muted: #5f5850;
+  --color-gold: #c4a271;
+  --color-gold-light: #dcc59f;
+  --color-gold-dark: #85663a;
+  --color-whatsapp: #1f9d55;
+  --color-danger: #b42318;
+  --color-success: #2f6f4f;
+
+  --shadow-soft: 0 1px 2px rgb(23 22 20 / 0.04), 0 8px 24px -12px rgb(23 22 20 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(23 22 20 / 0.04), 0 24px 48px -20px rgb(23 22 20 / 0.28);
+
+  --ease-elegant: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-in: fade-in 0.6s var(--ease-elegant) both;
+  --animate-slide-up: slide-up 0.9s var(--ease-elegant) both;
+  --animate-scale-in: scale-in 0.35s var(--ease-elegant) both;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    @apply bg-ivory font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    @apply font-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  ::selection {
+    @apply bg-gold-light text-ink;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-dark);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  input[type='date']::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+    cursor: pointer;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-[0.7rem] font-semibold tracking-[0.28em] text-gold-dark uppercase;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply block h-px w-8 bg-current opacity-70;
+  }
+  .eyebrow-light {
+    @apply text-gold-light;
+  }
+  .field-label {
+    @apply mb-1.5 block text-[0.68rem] font-semibold tracking-[0.18em] text-muted uppercase;
+  }
+  .field-input {
+    @apply block w-full rounded-md border border-sand bg-white px-3.5 py-3 text-[0.95rem] text-ink shadow-[inset_0_1px_1px_rgb(23_22_20/0.03)] transition placeholder:text-stone-light focus:border-gold-dark focus:ring-2 focus:ring-gold/25 focus:outline-none;
+  }
+  .field-input[aria-invalid='true'] {
+    @apply border-danger/70 focus:border-danger focus:ring-danger/15;
+  }
+  .field-error {
+    @apply mt-1.5 flex items-start gap-1.5 text-xs font-medium text-danger;
+  }
+  .prose-hotel p + p {
+    @apply mt-4;
+  }
+  .prose-hotel h2 {
+    @apply mt-10 mb-3 text-3xl text-ink;
+  }
+  .prose-hotel ul {
+    @apply mt-3 list-disc space-y-1.5 pl-5;
+  }
+}
+
+/* Reveal on scroll (ativado apenas com JavaScript) */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.9s var(--ease-elegant),
+    transform 0.9s var(--ease-elegant);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Textura de grão sutil para áreas escuras */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
