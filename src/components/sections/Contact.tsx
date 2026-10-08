@@ -13,6 +13,7 @@ import {
   type ContactErrors,
   type ContactMessage,
 } from '@/services/contact';
+import { track } from '@/services/analytics';
 import { whatsappUrl } from '@/services/whatsapp';
 import { Button } from '@/components/ui/Button';
 import { Field, fieldAria } from '@/components/ui/Field';
@@ -95,6 +96,7 @@ export function Contact() {
       const url = contactWhatsappUrl(data);
       if (url) window.open(url, '_blank', 'noopener,noreferrer');
       setStatus('success');
+      track('Mensagem enviada', { canal: contactChannel, assunto: data.subject });
       setData(empty);
       setSubmitted(false);
       return;
@@ -106,6 +108,7 @@ export function Contact() {
     try {
       await sendContactToEndpoint(data, controller.signal);
       setStatus('success');
+      track('Mensagem enviada', { canal: contactChannel, assunto: data.subject });
       setData(empty);
       setSubmitted(false);
     } catch {
@@ -233,7 +236,24 @@ export function Contact() {
               {status === 'error' && (
                 <p className="mt-6 flex animate-scale-in items-start gap-3 rounded-lg bg-danger/10 p-4 text-sm text-danger" role="alert">
                   <XCircle className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
-                  Não foi possível enviar sua mensagem agora. Tente novamente ou fale conosco pelo telefone {hotel.contact.phoneDisplay}.
+                  <span>
+                    Não foi possível enviar sua mensagem agora. Tente novamente ou fale conosco pelo telefone{' '}
+                    {hotel.contact.phoneDisplay}
+                    {contactWhatsappUrl(data) && (
+                      <>
+                        {' '}ou{' '}
+                        <a
+                          href={contactWhatsappUrl(data) ?? undefined}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold underline underline-offset-2"
+                        >
+                          envie esta mensagem pelo WhatsApp
+                        </a>
+                      </>
+                    )}
+                    .
+                  </span>
                 </p>
               )}
             </div>

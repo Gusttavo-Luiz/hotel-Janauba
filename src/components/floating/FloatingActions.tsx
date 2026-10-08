@@ -29,7 +29,7 @@ export function FloatingActions() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Falar no WhatsApp"
-          className="group pointer-events-auto relative flex h-14 items-center gap-0 rounded-full bg-whatsapp pr-4 pl-4 text-white shadow-[0_12px_30px_-10px_rgb(31_157_85/0.7)] transition-all duration-500 hover:-translate-y-0.5 hover:gap-2.5 hover:pr-5"
+          className="group pointer-events-auto relative flex h-14 items-center gap-0 rounded-full bg-whatsapp pr-4 pl-4 text-white shadow-[0_12px_30px_-10px_rgb(18_128_67/0.6)] transition-all duration-500 hover:-translate-y-0.5 hover:gap-2.5 hover:pr-5"
         >
           <span className="absolute inset-0 -z-10 animate-ping rounded-full bg-whatsapp opacity-20 [animation-duration:2.6s]" aria-hidden="true" />
           <WhatsAppIcon className="h-6 w-6" />

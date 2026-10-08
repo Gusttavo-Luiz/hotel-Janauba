@@ -3,6 +3,7 @@ import { ArrowRight, CalendarCheck, ExternalLink, RotateCcw } from 'lucide-react
 import { getRoom, rooms } from '@/data/rooms';
 import { useBooking } from '@/context/BookingContext';
 import { addDays, cn, toISODate } from '@/lib/utils';
+import { track } from '@/services/analytics';
 import {
   bookingConfig,
   bookingSummary,
@@ -92,7 +93,9 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
       document.getElementById(fid(firstError))?.focus();
       return;
     }
-    setResult({ ...buildBookingOptions(request), summary: bookingSummary(request) });
+    const summary = bookingSummary(request);
+    setResult({ ...buildBookingOptions(request), summary });
+    track('Ver disponibilidade', { noites: summary.nights, hospedes: request.guests, quarto: request.roomSlug ?? 'todos' });
     window.setTimeout(() => resultRef.current?.focus(), 30);
   };
 

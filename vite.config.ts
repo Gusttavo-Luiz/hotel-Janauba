@@ -17,9 +17,15 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
-    define: siteUrl ? { 'import.meta.env.VITE_SITE_URL': JSON.stringify(siteUrl) } : {},
+    define: {
+      ...(siteUrl ? { 'import.meta.env.VITE_SITE_URL': JSON.stringify(siteUrl) } : {}),
+      // Métricas (Vercel Web Analytics) apenas em builds feitos na Vercel.
+      'import.meta.env.VITE_ANALYTICS': JSON.stringify(process.env.VERCEL ? 'vercel' : ''),
+    },
     build: {
       target: 'es2020',
+      // Fontes sempre como arquivo (o CSS é embutido no HTML pelo pré-render).
+      assetsInlineLimit: (file: string) => (/\.woff2?$/.test(file) ? false : undefined),
       cssMinify: true,
     },
   };

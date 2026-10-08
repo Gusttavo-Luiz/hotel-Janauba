@@ -1,8 +1,9 @@
+import { siteConfig } from '@/config/site';
 import type { FaqItem, GalleryCategory, GalleryItem, NavItem, NearbyPlace, Review, SiteImage } from '@/types';
 import { hotel } from './hotel';
 import { rooms } from './rooms';
 
-export const navigation: NavItem[] = [
+const allNavigation: NavItem[] = [
   { label: 'Início', section: 'inicio' },
   { label: 'O Hotel', section: 'o-hotel' },
   { label: 'Acomodações', section: 'acomodacoes' },
@@ -37,13 +38,19 @@ export const galleryCategories: GalleryCategory[] = [
   { id: 'quartos', label: 'Quartos' },
 ];
 
-export const gallery: GalleryItem[] = [
+const allGallery: GalleryItem[] = [
   { id: 'fachada', category: 'hotel', image: images.hero },
   ...rooms.map((room) => ({ id: room.slug, category: 'quartos', image: room.images[0] })),
   { id: 'recepcao', category: 'hotel', image: images.about },
   { id: 'estacionamento', category: 'hotel', image: { alt: 'Estacionamento do Hotel Premier', placeholder: 'Foto do estacionamento' } },
   { id: 'banheiro', category: 'quartos', image: rooms[0].images[2] },
 ];
+
+/** No site publicado, a galeria mostra só fotos reais; os espaços reservados ficam ocultos. */
+export const gallery = allGallery.filter((g) => g.image.src || siteConfig.showPlaceholderLabels);
+
+/** O item "Galeria" só aparece no menu quando há fotos para mostrar. */
+export const navigation = allNavigation.filter((n) => n.section !== 'galeria' || gallery.length > 0);
 
 /* -------------------------------------------------------------------------- */
 /* Avaliações reais (trechos públicos)                                         */

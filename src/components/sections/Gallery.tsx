@@ -21,6 +21,8 @@ export function Gallery() {
   );
   const showFilters = usedCategories.length > 1 && gallery.length >= 6;
 
+  if (!gallery.length) return null;
+
   return (
     <section id="galeria" aria-labelledby="galeria-title" className="scroll-mt-20 bg-cream/60 py-24 sm:py-32">
       <div className="container-x">

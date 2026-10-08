@@ -4,6 +4,7 @@ import { BedDouble, CalendarClock, Check, Expand, Link2, Maximize2, PawPrint, Ph
 import { getAmenity } from '@/data/amenities';
 import { hotel } from '@/data/hotel';
 import { getRoom, priceDisclaimer, rooms } from '@/data/rooms';
+import { siteConfig } from '@/config/site';
 import { formatPrice } from '@/lib/utils';
 import { whatsappUrl } from '@/services/whatsapp';
 import { BookingForm } from '@/components/booking/BookingForm';
@@ -49,6 +50,7 @@ export default function RoomDetailPage() {
   const [index, setIndex] = useState<number | null>(null);
   if (!room) return <NotFoundPage />;
 
+  const photos = room.images.filter((img) => img.src || siteConfig.showPlaceholderLabels);
   const roomAmenities = room.amenityIds.map(getAmenity).filter((a) => a !== undefined);
   const others = rooms.filter((r) => r.slug !== room.slug);
   const wa = whatsappUrl(`Olá! Gostaria de saber a disponibilidade do ${room.name} no ${hotel.name}.`);
@@ -73,47 +75,51 @@ export default function RoomDetailPage() {
         ]}
       />
 
-      <section className="py-14 sm:py-20" aria-label={`Fotos do ${room.name}`}>
-        <div className="container-x">
-          <div className="grid gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4">
-            {room.images.map((img, i) => (
-              <button
-                key={img.placeholder}
-                type="button"
-                onClick={() => setIndex(i)}
-                aria-label={`Ampliar foto: ${img.alt}`}
-                className={
-                  i === 0
-                    ? 'group relative overflow-hidden rounded-2xl sm:col-span-2 sm:row-span-2'
-                    : 'group relative hidden overflow-hidden rounded-2xl sm:block'
-                }
-              >
-                <Media
-                  image={img}
-                  tone={i === 1 ? 'dark' : 'light'}
-                  priority={i === 0}
-                  className={i === 0 ? 'aspect-[4/3] h-full transition-transform duration-700 group-hover:scale-[1.03] sm:aspect-auto sm:min-h-[460px]' : 'h-full min-h-[220px] transition-transform duration-700 group-hover:scale-[1.04]'}
-                  sizes={i === 0 ? '(min-width: 640px) 66vw, 100vw' : '33vw'}
-                />
-                {i === 0 && (
-                  <span className="absolute right-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-ink shadow-soft">
-                    <Expand className="h-3.5 w-3.5" aria-hidden="true" /> {room.images.length} fotos
-                  </span>
-                )}
-              </button>
-            ))}
+      {photos.length > 0 && (
+        <section className="py-14 sm:py-20" aria-label={`Fotos do ${room.name}`}>
+          <div className="container-x">
+            <div className="grid gap-3 sm:grid-cols-3 sm:grid-rows-2 sm:gap-4">
+              {photos.map((img, i) => (
+                <button
+                  key={img.placeholder}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  aria-label={`Ampliar foto: ${img.alt}`}
+                  className={
+                    i === 0
+                      ? 'group relative overflow-hidden rounded-2xl sm:col-span-2 sm:row-span-2'
+                      : 'group relative hidden overflow-hidden rounded-2xl sm:block'
+                  }
+                >
+                  <Media
+                    image={img}
+                    tone={i === 1 ? 'dark' : 'light'}
+                    priority={i === 0}
+                    className={i === 0 ? 'aspect-[4/3] h-full transition-transform duration-700 group-hover:scale-[1.03] sm:aspect-auto sm:min-h-[460px]' : 'h-full min-h-[220px] transition-transform duration-700 group-hover:scale-[1.04]'}
+                    sizes={i === 0 ? '(min-width: 640px) 66vw, 100vw' : '33vw'}
+                  />
+                  {i === 0 && (
+                    <span className="absolute right-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-xs font-semibold text-ink shadow-soft">
+                      <Expand className="h-3.5 w-3.5" aria-hidden="true" /> {photos.length} {photos.length === 1 ? 'foto' : 'fotos'}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="pb-24" aria-labelledby="detalhes-title">
+      <section className={photos.length > 0 ? 'pb-24' : 'py-16 sm:py-20'} aria-labelledby="detalhes-title">
         <div className="container-x grid gap-14 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
             <dl className="grid grid-cols-2 gap-6 border-y border-ink/10 py-8 sm:grid-cols-4">
               {facts.map((f) => (
                 <div key={f.label}>
-                  <span className="text-gold-dark">{f.icon}</span>
-                  <dt className="mt-3 text-[0.65rem] font-semibold tracking-[0.2em] text-stone uppercase">{f.label}</dt>
+                  <dt className="text-[0.65rem] font-semibold tracking-[0.2em] text-stone uppercase">
+                    <span className="mb-3 block text-gold-dark">{f.icon}</span>
+                    {f.label}
+                  </dt>
                   <dd className="mt-1 text-sm font-semibold text-ink">{f.value}</dd>
                 </div>
               ))}
@@ -212,7 +218,7 @@ export default function RoomDetailPage() {
         </section>
       )}
 
-      <Lightbox items={room.images} index={index} onChange={setIndex} />
+      <Lightbox items={photos} index={index} onChange={setIndex} />
     </>
   );
 }

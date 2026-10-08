@@ -10,7 +10,22 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const clientDir = path.join(root, 'dist/client');
 const serverEntry = path.join(root, 'dist/server/entry-server.js');
 
-const template = fs.readFileSync(path.join(clientDir, 'index.html'), 'utf-8');
+let template = fs.readFileSync(path.join(clientDir, 'index.html'), 'utf-8');
+
+// CSS embutido no HTML: elimina uma requisição que bloqueia a primeira pintura.
+template = template.replace(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/, (_, href) => {
+  const css = fs.readFileSync(path.join(clientDir, href), 'utf-8');
+  return `<style>${css}</style>`;
+});
+
+// Pré-carrega as fontes usadas no topo da página (títulos e textos).
+const assetFiles = fs.readdirSync(path.join(clientDir, 'assets'));
+const preloads = [/^cormorant-garamond-latin-500-normal-.*\.woff2$/, /^manrope-latin-wght-normal-.*\.woff2$/]
+  .map((re) => assetFiles.find((f) => re.test(f)))
+  .filter(Boolean)
+  .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
+  .join('\n    ');
+template = template.replace('<!--head:start-->', `${preloads}\n    <!--head:start-->`);
 const { render, head, allRoutes, siteConfig } = await import(pathToFileURL(serverEntry).href);
 
 const HEAD_RE = /<!--head:start-->[\s\S]*?<!--head:end-->/;

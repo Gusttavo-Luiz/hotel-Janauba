@@ -102,8 +102,10 @@ export default function HotelPage() {
           <dl className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-ink/10 bg-ink/10 sm:grid-cols-2 lg:grid-cols-4" data-reveal>
             {policies.map((p) => (
               <div key={p.title} className="bg-white p-7">
-                <span className="text-gold-dark">{p.icon}</span>
-                <dt className="mt-4 text-[0.68rem] font-semibold tracking-[0.2em] text-stone uppercase">{p.title}</dt>
+                <dt className="text-[0.68rem] font-semibold tracking-[0.2em] text-stone uppercase">
+                  <span className="mb-4 block text-gold-dark">{p.icon}</span>
+                  {p.title}
+                </dt>
                 <dd className="mt-1.5 leading-relaxed text-ink">{p.text}</dd>
               </div>
             ))}
