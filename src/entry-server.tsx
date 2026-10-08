@@ -4,13 +4,14 @@ import { StaticRouter } from 'react-router';
 import App from './App';
 import { absoluteUrl, siteConfig } from './config/site';
 import { allRoutes, breadcrumbJsonLd, getRouteMeta, hotelJsonLd, shareImage } from './data/seo';
+import { basePath, withBase } from './lib/utils';
 
-export { allRoutes, siteConfig };
+export { allRoutes, basePath, siteConfig };
 
 export function render(url: string) {
   return renderToString(
     <StrictMode>
-      <StaticRouter location={url}>
+      <StaticRouter basename={basePath || undefined} location={`${basePath}${url}`}>
         <App />
       </StaticRouter>
     </StrictMode>,
@@ -27,11 +28,11 @@ const jsonLd = (data: unknown) =>
 export function head(url: string) {
   const meta = getRouteMeta(url);
   const canonical = absoluteUrl(meta.path);
-  const image = absoluteUrl(shareImage.path) || shareImage.path;
+  const image = absoluteUrl(shareImage.path) || withBase(shareImage.path);
   const tags = [
     `<title>${escapeHtml(meta.title)}</title>`,
     `<meta name="description" content="${escapeHtml(meta.description)}" />`,
-    meta.noindex ? '<meta name="robots" content="noindex" />' : '',
+    meta.noindex || siteConfig.noindex ? '<meta name="robots" content="noindex" />' : '',
     siteConfig.googleSiteVerification
       ? `<meta name="google-site-verification" content="${escapeHtml(siteConfig.googleSiteVerification)}" />`
       : '',

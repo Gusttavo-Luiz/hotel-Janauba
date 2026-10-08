@@ -10,11 +10,14 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const clientDir = path.join(root, 'dist/client');
 const serverEntry = path.join(root, 'dist/server/entry-server.js');
 
+// Subcaminho de publicação (ex.: /hotel-Janauba/ no GitHub Pages).
+const base = process.env.BASE_PATH || '/';
+
 let template = fs.readFileSync(path.join(clientDir, 'index.html'), 'utf-8');
 
 // CSS embutido no HTML: elimina uma requisição que bloqueia a primeira pintura.
-template = template.replace(/<link rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"[^>]*>/, (_, href) => {
-  const css = fs.readFileSync(path.join(clientDir, href), 'utf-8');
+template = template.replace(/<link rel="stylesheet"[^>]*href="([^"]+\.css)"[^>]*>/, (_, href) => {
+  const css = fs.readFileSync(path.join(clientDir, href.slice(base.length)), 'utf-8');
   return `<style>${css}</style>`;
 });
 
@@ -23,7 +26,7 @@ const assetFiles = fs.readdirSync(path.join(clientDir, 'assets'));
 const preloads = [/^cormorant-garamond-latin-500-normal-.*\.woff2$/, /^manrope-latin-wght-normal-.*\.woff2$/]
   .map((re) => assetFiles.find((f) => re.test(f)))
   .filter(Boolean)
-  .map((f) => `<link rel="preload" href="/assets/${f}" as="font" type="font/woff2" crossorigin />`)
+  .map((f) => `<link rel="preload" href="${base}assets/${f}" as="font" type="font/woff2" crossorigin />`)
   .join('\n    ');
 template = template.replace('<!--head:start-->', `${preloads}\n    <!--head:start-->`);
 const { render, head, allRoutes, siteConfig } = await import(pathToFileURL(serverEntry).href);
@@ -44,13 +47,18 @@ for (const route of allRoutes) {
   // rota.html: o Cloudflare Pages serve /rota sem redirecionar para /rota/
   const file = route.path === '/' ? 'index.html' : `${route.path.slice(1)}.html`;
   writePage(route.path, path.join(clientDir, file));
+  // Cópia em rota/index.html para hospedagens que redirecionam /rota para /rota/ (ex.: GitHub Pages).
+  if (process.env.PRERENDER_DIR_INDEX === 'true' && route.path !== '/') {
+    writePage(route.path, path.join(clientDir, route.path.slice(1), 'index.html'));
+  }
 }
 writePage('/404', path.join(clientDir, '404.html'));
 
-// Deploys de pré-visualização do Cloudflare Pages (branches fora da main) não devem ser indexados.
-if (process.env.CF_PAGES && process.env.CF_PAGES_BRANCH !== 'main') {
+// Pré-visualizações (branches fora da main no Cloudflare Pages) e cópias marcadas com
+// VITE_NOINDEX não devem ser indexadas.
+if ((process.env.CF_PAGES && process.env.CF_PAGES_BRANCH !== 'main') || siteConfig.noindex) {
   fs.writeFileSync(path.join(clientDir, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
-  console.log('  ✓ robots.txt bloqueando indexação (deploy de pré-visualização)');
+  console.log('  ✓ robots.txt bloqueando indexação (cópia de visualização)');
 }
 // sitemap.xml e robots.txt (apenas quando a URL pública estiver definida)
 else if (siteConfig.url) {

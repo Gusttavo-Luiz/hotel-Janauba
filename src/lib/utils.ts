@@ -30,3 +30,9 @@ export function formatDateBR(iso: string) {
 }
 
 export const sectionHref = (section: string) => (section === 'inicio' ? '/' : `/#${section}`);
+
+/** Prefixo do site quando publicado num subcaminho (ex.: '/hotel-Janauba' no GitHub Pages); '' na raiz. */
+export const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** Prefixa caminhos absolutos de arquivos públicos (ex.: '/images/a.webp') com o subcaminho do site. */
+export const withBase = (p: string) => (p.startsWith('/') && !p.startsWith('//') ? `${basePath}${p}` : p);

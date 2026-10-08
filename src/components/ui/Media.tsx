@@ -1,7 +1,7 @@
 import { useId, useState, type ReactNode } from 'react';
 import { ImageIcon } from 'lucide-react';
 import { siteConfig } from '@/config/site';
-import { cn } from '@/lib/utils';
+import { cn, withBase } from '@/lib/utils';
 import type { SiteImage } from '@/types';
 
 interface MediaProps {
@@ -66,8 +66,8 @@ export function Media({ image, className, tone = 'light', sizes = '100vw', prior
   return (
     <div className={cn('relative overflow-hidden bg-sand', className)}>
       <img
-        src={image.src}
-        srcSet={image.srcSet}
+        src={withBase(image.src)}
+        srcSet={image.srcSet?.replace(/(^|,\s*)(\/[^\s,]+)/g, (_, sep: string, url: string) => sep + withBase(url))}
         sizes={image.srcSet ? sizes : undefined}
         alt={image.alt}
         width={image.width}

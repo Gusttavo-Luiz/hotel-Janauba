@@ -14,6 +14,8 @@ export const siteConfig = {
   contactEndpoint: (env.VITE_CONTACT_ENDPOINT as string | undefined) ?? '',
   /** Código de verificação do Google Search Console (método "Tag HTML"). */
   googleSiteVerification: (env.VITE_GOOGLE_SITE_VERIFICATION as string | undefined) ?? '',
+  /** Pede aos buscadores para não indexar (cópias de visualização, como o GitHub Pages). */
+  noindex: env.VITE_NOINDEX === 'true',
   locale: 'pt_BR',
   /**
    * Exibe os espaços reservados para fotos ainda não enviadas, com rótulo.
