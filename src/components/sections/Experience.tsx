@@ -1,8 +1,11 @@
-import { ArrowUpRight } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { ArrowUpRight, BedDouble, ConciergeBell, MapPin, Waves } from 'lucide-react';
 import { images, nearby } from '@/data/content';
 import { hotel } from '@/data/hotel';
+import { rooms } from '@/data/rooms';
 import { cn } from '@/lib/utils';
 import type { SiteImage } from '@/types';
+import { ArtPanel } from '@/components/ui/ArtPanel';
 import { Media } from '@/components/ui/Media';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
@@ -11,12 +14,17 @@ interface Chapter {
   title: string;
   text: string;
   image: SiteImage;
+  /** Destaque exibido enquanto a foto não é enviada. */
+  art: { icon: ReactNode; figure: string; caption: string; note?: string };
   quote?: { text: string; author: string };
   list?: { label: string; value: string; url?: string }[];
 }
 
 const byName = (name: string) => nearby.find((n) => n.name === name);
 const diocese = byName('Diocese de Janaúba');
+const praia = byName('Praia do Copo Sujo');
+const capacities = rooms.map((r) => r.capacity);
+const artIcon = { className: 'h-6 w-6', strokeWidth: 1.5, 'aria-hidden': true } as const;
 
 const chapters: Chapter[] = [
   {
@@ -24,6 +32,12 @@ const chapters: Chapter[] = [
     title: 'Conforto para recarregar as energias',
     text: 'Quartos para duas, três ou quatro pessoas, ar-condicionado e Wi-Fi gratuito: o necessário para descansar bem depois de um dia de compromissos ou passeios pela região.',
     image: images.comfort,
+    art: {
+      icon: <BedDouble {...artIcon} />,
+      figure: `${Math.min(...capacities)} a ${Math.max(...capacities)}`,
+      caption: 'hóspedes por quarto',
+      note: rooms.map((r) => r.name.replace('Quarto ', '')).join(' · '),
+    },
     quote: { text: 'Os quartos são novos, espaçosos e confortáveis.', author: 'Hóspede no Tripadvisor' },
   },
   {
@@ -31,6 +45,7 @@ const chapters: Chapter[] = [
     title: 'Hospitalidade a qualquer hora',
     text: 'Nossa recepção funciona 24 horas e o serviço de quarto deixa a estadia ainda mais prática. Chegou tarde? Precisa de uma orientação? Estamos por aqui.',
     image: images.service,
+    art: { icon: <ConciergeBell {...artIcon} />, figure: '24h', caption: 'recepção', note: 'e serviço de quarto' },
     quote: { text: 'O atendimento é impecável.', author: 'Hóspede no Tripadvisor' },
   },
   {
@@ -38,6 +53,12 @@ const chapters: Chapter[] = [
     title: 'No Centro, perto do que importa',
     text: `Na ${hotel.address.street.replace(', 175', '')}, no Centro de Janaúba, você fica a ${diocese?.minutes ?? 3} minutos da Diocese de Janaúba e tem opções de alimentação logo na esquina do prédio, como lembram nossos hóspedes.`,
     image: images.location,
+    art: {
+      icon: <MapPin {...artIcon} />,
+      figure: `${diocese?.minutes ?? 3} min`,
+      caption: 'da Diocese de Janaúba',
+      note: `${hotel.address.street.split(', ')[0]} · ${hotel.address.neighborhood}`,
+    },
     quote: { text: 'Opções de alimentação próximas (na esquina do prédio).', author: 'Hóspede no Google' },
   },
   {
@@ -45,6 +66,7 @@ const chapters: Chapter[] = [
     title: 'Rio, praia e barragem a poucos minutos',
     text: 'A região é bem avaliada para turismo, lazer, culinária e locomoção. Aproveite a estadia para conhecer as águas do Rio Gorutuba, a Barragem e o Balneário Bico da Pedra.',
     image: images.region,
+    art: { icon: <Waves {...artIcon} />, figure: `${praia?.minutes ?? 7} min`, caption: 'da Praia do Copo Sujo', note: 'Rio Gorutuba' },
     list: nearby
       .filter((n) => n.name !== 'Diocese de Janaúba')
       .map((n) => ({ label: n.name, value: `${n.minutes} min`, url: n.url })),
@@ -75,6 +97,7 @@ export function Experience() {
                 <div className={cn('relative lg:col-span-7', reversed && 'lg:order-2')} data-reveal>
                   <Media
                     image={c.image}
+                    art={<ArtPanel {...c.art} tone={i % 2 === 0 ? 'light' : 'dark'} size="lg" />}
                     className="aspect-[4/3] rounded-2xl sm:aspect-[16/10]"
                     tone={i % 2 === 0 ? 'light' : 'dark'}
                     sizes="(min-width: 1024px) 58vw, 100vw"

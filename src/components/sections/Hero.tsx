@@ -5,6 +5,7 @@ import { images } from '@/data/content';
 import { hotel, ratings } from '@/data/hotel';
 import { useBooking } from '@/context/BookingContext';
 import { formatScore } from '@/lib/utils';
+import { ArchMotif } from '@/components/ui/ArchMotif';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Media } from '@/components/ui/Media';
 
@@ -13,20 +14,7 @@ export function HeroBackdrop() {
   return (
     <div className="grain absolute inset-0 bg-[#141311]" aria-hidden="true">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_78%_18%,rgb(196_162_113/0.28),transparent_60%),radial-gradient(ellipse_60%_50%_at_8%_100%,rgb(133_102_58/0.25),transparent_60%),linear-gradient(160deg,#211e1a_0%,#141311_55%,#0d0c0b_100%)]" />
-      <svg
-        className="absolute top-1/2 right-[-18%] h-[130%] -translate-y-1/2 text-gold-light/[0.13] sm:right-[-8%] lg:right-[-2%]"
-        viewBox="0 0 600 800"
-        fill="none"
-      >
-        {[0, 1, 2, 3, 4, 5].map((i) => (
-          <path
-            key={i}
-            d={`M ${60 + i * 40} 800 V ${360 + i * 12} A ${240 - i * 40} ${240 - i * 40} 0 0 1 ${540 - i * 40} ${360 + i * 12} V 800`}
-            stroke="currentColor"
-            strokeWidth="1"
-          />
-        ))}
-      </svg>
+      <ArchMotif className="absolute top-1/2 right-[-18%] h-[130%] -translate-y-1/2 text-gold-light/[0.13] sm:right-[-8%] lg:right-[-2%]" />
     </div>
   );
 }

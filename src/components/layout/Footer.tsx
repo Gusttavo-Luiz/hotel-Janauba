@@ -151,7 +151,7 @@ export function Footer() {
       </div>
 
       <div className="relative border-t border-white/10">
-        <div className="container-x flex flex-col gap-4 py-6 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-x flex flex-col gap-4 pt-6 pb-24 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between md:pb-6">
           <p>
             © <span suppressHydrationWarning>{year}</span> {hotel.name}. Todos os direitos reservados.
           </p>

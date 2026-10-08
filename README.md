@@ -89,7 +89,9 @@ Campos com `null` ainda não foram informados: a seção correspondente fica ocu
 
 ## Fotos
 
-Ainda não recebemos fotos oficiais do hotel, e o site não usa imagens genéricas que poderiam ser confundidas com o hotel. Em desenvolvimento, cada espaço de imagem mostra um **placeholder identificado** ("Espaço para foto · …"). No site publicado, os espaços aparecem sem rótulo, e a galeria (com o item "Galeria" do menu) fica oculta até a primeira foto ser adicionada. Para ver os rótulos no site publicado, defina `VITE_SHOW_PLACEHOLDERS=true`.
+Ainda não recebemos fotos oficiais do hotel, e o site não usa imagens genéricas que poderiam ser confundidas com o hotel. Enquanto isso, os principais espaços de foto mostram **artes tipográficas** com dados reais do hotel (capacidade dos quartos, endereço, nota no Google, recepção 24h, distâncias), feitas com `ArtPanel` e definidas em `src/components/ui/arts.tsx` e na seção de experiência. Cada arte some sozinha quando a foto correspondente recebe `src`.
+
+Em desenvolvimento, cada espaço também mostra uma etiqueta com a foto esperada ("Quarto Duplo — foto principal", por exemplo). No site publicado, a galeria (com o item "Galeria" do menu) fica oculta até a primeira foto ser adicionada. Para ver as etiquetas no site publicado, defina `VITE_SHOW_PLACEHOLDERS=true`.
 
 Para adicionar as fotos reais:
 

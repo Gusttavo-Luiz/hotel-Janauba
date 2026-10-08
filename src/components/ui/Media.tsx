@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { ImageIcon } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/lib/utils';
@@ -7,26 +7,28 @@ import type { SiteImage } from '@/types';
 interface MediaProps {
   image: SiteImage;
   className?: string;
-  /** Tom do placeholder: claro para fundos claros, escuro para fundos escuros. */
+  /** Tom do espaço sem foto: claro para fundos claros, escuro para fundos escuros. */
   tone?: 'light' | 'dark';
   sizes?: string;
   priority?: boolean;
   imgClassName?: string;
+  /** Composição exibida enquanto a foto real não é enviada (ver ArtPanel). */
+  art?: ReactNode;
 }
 
 /**
- * Imagem responsiva com lazy loading. Sem `src`, exibe um placeholder
- * elegante e claramente identificado como espaço reservado para foto.
+ * Imagem responsiva com lazy loading. Sem `src`, mostra a arte (`art`) ou um
+ * espaço neutro; em desenvolvimento, identifica o espaço reservado para a foto.
  */
-export function Media({ image, className, tone = 'light', sizes = '100vw', priority, imgClassName }: MediaProps) {
+export function Media({ image, className, tone = 'light', sizes = '100vw', priority, imgClassName, art }: MediaProps) {
   const [loaded, setLoaded] = useState(false);
   const patternId = `ph-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
   if (!image.src) {
+    const labels = siteConfig.showPlaceholderLabels;
     return (
       <div
-        role="img"
-        aria-label={image.alt}
+        aria-hidden="true"
         className={cn(
           'relative isolate flex items-center justify-center overflow-hidden',
           tone === 'light'
@@ -35,23 +37,28 @@ export function Media({ image, className, tone = 'light', sizes = '100vw', prior
           className,
         )}
       >
-        <svg className="absolute inset-0 -z-10 h-full w-full opacity-[0.18]" aria-hidden="true">
-          <defs>
-            <pattern id={patternId} width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="22" stroke="currentColor" strokeWidth="0.6" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill={`url(#${patternId})`} />
-        </svg>
-        {siteConfig.showPlaceholderLabels && (
-          <div className="flex max-w-[80%] flex-col items-center gap-2 text-center">
-            <ImageIcon aria-hidden="true" strokeWidth={1.2} className="h-7 w-7 opacity-70" />
-            <span className="text-[0.62rem] font-semibold tracking-[0.22em] uppercase opacity-60">
-              Espaço para foto
-            </span>
-            <span className="font-serif text-base leading-tight italic opacity-90 sm:text-lg">{image.placeholder}</span>
-          </div>
+        {art ?? (
+          <svg className="absolute inset-0 -z-10 h-full w-full opacity-[0.18]">
+            <defs>
+              <pattern id={patternId} width="22" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <line x1="0" y1="0" x2="0" y2="22" stroke="currentColor" strokeWidth="0.6" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+          </svg>
         )}
+        {labels &&
+          (art ? (
+            <span className="absolute bottom-3 left-3 z-10 inline-flex max-w-[calc(100%-1.5rem)] items-center gap-1.5 truncate rounded-full bg-black/45 px-2.5 py-1 text-[0.58rem] font-semibold tracking-[0.14em] text-white/80 uppercase backdrop-blur">
+              <ImageIcon className="h-3 w-3" strokeWidth={1.5} /> {image.placeholder}
+            </span>
+          ) : (
+            <div className="flex max-w-[80%] flex-col items-center gap-2 text-center">
+              <ImageIcon strokeWidth={1.2} className="h-7 w-7 opacity-70" />
+              <span className="text-[0.62rem] font-semibold tracking-[0.22em] uppercase opacity-60">Espaço para foto</span>
+              <span className="font-serif text-base leading-tight italic opacity-90 sm:text-lg">{image.placeholder}</span>
+            </div>
+          ))}
       </div>
     );
   }

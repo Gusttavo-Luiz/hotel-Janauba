@@ -14,6 +14,7 @@ import { Media } from '@/components/ui/Media';
 import { Lightbox } from '@/components/sections/Lightbox';
 import { PageHero } from '@/components/sections/PageHero';
 import { RoomCard } from '@/components/sections/RoomCard';
+import { ROOM_BOOKING_ID } from '@/components/floating/FloatingActions';
 import NotFoundPage from './NotFoundPage';
 
 function ShareButton({ title }: { title: string }) {
@@ -161,7 +162,7 @@ export default function RoomDetailPage() {
             </ul>
           </div>
 
-          <aside className="lg:col-span-5" aria-label="Reservar esta acomodação">
+          <aside id={ROOM_BOOKING_ID} className="scroll-mt-24 lg:col-span-5" aria-label="Reservar esta acomodação">
             <div className="rounded-2xl border border-ink/[0.07] bg-white p-6 shadow-lift sm:p-8 lg:sticky lg:top-28">
               {room.priceFrom ? (
                 <p className="text-sm text-muted">
