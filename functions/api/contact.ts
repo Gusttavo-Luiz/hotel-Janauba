@@ -1,13 +1,20 @@
 /**
- * Função da Vercel que recebe o formulário de contato e envia por e-mail (Resend).
+ * Função do Cloudflare Pages (rota /api/contact) que recebe o formulário de contato
+ * e envia por e-mail (Resend).
  *
- * Variáveis de ambiente (Vercel → Settings → Environment Variables), nunca no código:
+ * Variáveis (Cloudflare → projeto → Settings → Variables and Secrets), nunca no código:
  *   RESEND_API_KEY      chave da API do Resend (resend.com)
  *   CONTACT_TO_EMAIL    e-mail do hotel que recebe as mensagens
  *   CONTACT_FROM_EMAIL  remetente (opcional; exige domínio verificado no Resend)
  *
  * No site, ative com VITE_CONTACT_ENDPOINT=/api/contact.
  */
+
+interface Env {
+  RESEND_API_KEY?: string;
+  CONTACT_TO_EMAIL?: string;
+  CONTACT_FROM_EMAIL?: string;
+}
 
 interface ContactPayload {
   name: string;
@@ -53,9 +60,9 @@ function parse(body: unknown): ContactPayload | null {
   return out;
 }
 
-export async function POST(request: Request): Promise<Response> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
+export async function onRequestPost({ request, env }: { request: Request; env: Env }): Promise<Response> {
+  const apiKey = env.RESEND_API_KEY;
+  const to = env.CONTACT_TO_EMAIL;
   if (!apiKey || !to) return json({ error: 'not_configured' }, 503);
 
   // Aceita apenas envios feitos a partir do próprio site.
@@ -82,18 +89,23 @@ export async function POST(request: Request): Promise<Response> {
     '— Enviado pelo formulário de contato do site do Hotel Premier Janaúba',
   ].join('\n');
 
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: process.env.CONTACT_FROM_EMAIL || 'Site Hotel Premier <onboarding@resend.dev>',
-      to: [to],
-      reply_to: payload.email,
-      subject: `[Site] ${payload.subject} — ${payload.name}`,
-      text,
-    }),
-  });
-
-  if (!response.ok) return json({ error: 'send_failed' }, 502);
+  let sent = false;
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL || 'Site Hotel Premier <onboarding@resend.dev>',
+        to: [to],
+        reply_to: payload.email,
+        subject: `[Site] ${payload.subject} — ${payload.name}`,
+        text,
+      }),
+    });
+    sent = response.ok;
+  } catch {
+    sent = false;
+  }
+  if (!sent) return json({ error: 'send_failed' }, 502);
   return json({ ok: true });
 }

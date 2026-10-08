@@ -5,23 +5,20 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
-  // Na Vercel, sem VITE_SITE_URL definida, usa o domínio de produção do projeto.
-  const vercelProduction =
-    process.env.VERCEL_ENV === 'production' && process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : '';
-  const siteUrl = env.VITE_SITE_URL || vercelProduction;
+  // No Cloudflare Pages, sem VITE_SITE_URL definida, o build da branch main usa o
+  // endereço do projeto: https://<hash>.<projeto>.pages.dev → https://<projeto>.pages.dev
+  const pagesMatch =
+    process.env.CF_PAGES_BRANCH === 'main'
+      ? (process.env.CF_PAGES_URL ?? '').match(/^https:\/\/[^.]+\.(.+\.pages\.dev)\/?$/)
+      : null;
+  const siteUrl = env.VITE_SITE_URL || (pagesMatch ? `https://${pagesMatch[1]}` : '');
 
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
-    define: {
-      ...(siteUrl ? { 'import.meta.env.VITE_SITE_URL': JSON.stringify(siteUrl) } : {}),
-      // Métricas (Vercel Web Analytics) apenas em builds feitos na Vercel.
-      'import.meta.env.VITE_ANALYTICS': JSON.stringify(process.env.VERCEL ? 'vercel' : ''),
-    },
+    define: siteUrl ? { 'import.meta.env.VITE_SITE_URL': JSON.stringify(siteUrl) } : {},
     build: {
       target: 'es2020',
       // Fontes sempre como arquivo (o CSS é embutido no HTML pelo pré-render).

@@ -4,7 +4,6 @@ import { BookingProvider } from '@/context/BookingContext';
 import { getRouteMeta } from '@/data/seo';
 import { absoluteUrl } from '@/config/site';
 import { useRevealOnScroll } from '@/hooks';
-import { initAnalytics, trackLinkClicks } from '@/services/analytics';
 import { FloatingActions } from '@/components/floating/FloatingActions';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -44,11 +43,6 @@ function RouteEffects() {
   }, [location.key, location.hash]);
 
   useRevealOnScroll(location.pathname);
-
-  useEffect(() => {
-    initAnalytics();
-    return trackLinkClicks();
-  }, []);
   return null;
 }
 

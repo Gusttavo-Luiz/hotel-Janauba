@@ -1,6 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-import { track } from '@/services/analytics';
 
 interface BookingContextValue {
   /** Acomodação pré-selecionada (ex.: ao clicar em "Reservar" num card). */
@@ -26,7 +25,6 @@ export function BookingProvider({ children }: { children: ReactNode }) {
     (slug?: string) => {
       if (slug !== undefined) setRoomSlug(slug);
       setFocusSignal((n) => n + 1);
-      track('Abrir reserva', { pagina: pathname, ...(slug ? { quarto: slug } : {}) });
       if (pathname !== '/') {
         navigate(`/#${BOOKING_SECTION_ID}`);
       } else {

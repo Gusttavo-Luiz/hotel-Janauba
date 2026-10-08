@@ -13,7 +13,6 @@ import {
   type ContactErrors,
   type ContactMessage,
 } from '@/services/contact';
-import { track } from '@/services/analytics';
 import { whatsappUrl } from '@/services/whatsapp';
 import { Button } from '@/components/ui/Button';
 import { Field, fieldAria } from '@/components/ui/Field';
@@ -96,7 +95,6 @@ export function Contact() {
       const url = contactWhatsappUrl(data);
       if (url) window.open(url, '_blank', 'noopener,noreferrer');
       setStatus('success');
-      track('Mensagem enviada', { canal: contactChannel, assunto: data.subject });
       setData(empty);
       setSubmitted(false);
       return;
@@ -108,7 +106,6 @@ export function Contact() {
     try {
       await sendContactToEndpoint(data, controller.signal);
       setStatus('success');
-      track('Mensagem enviada', { canal: contactChannel, assunto: data.subject });
       setData(empty);
       setSubmitted(false);
     } catch {

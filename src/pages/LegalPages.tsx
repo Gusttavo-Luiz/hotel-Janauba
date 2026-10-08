@@ -62,8 +62,8 @@ export function PrivacyPage() {
       </p>
       <h2>Métricas de acesso</h2>
       <p>
-        Usamos o Vercel Web Analytics para contar visitas, páginas vistas e cliques em botões como “Reservar” e
-        “WhatsApp”. Os dados são anônimos e agregados, não identificam o visitante e não utilizam cookies.
+        Usamos o Cloudflare Web Analytics para contar visitas e páginas vistas e medir a velocidade do site. Os
+        dados são anônimos e agregados, não identificam o visitante e não utilizam cookies.
       </p>
       <h2>Cookies</h2>
       <p>
