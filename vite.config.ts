@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
   const siteUrl = env.VITE_SITE_URL || (pagesMatch ? `https://${pagesMatch[1]}` : '');
 
   return {
+    // Subcaminho de publicação (ex.: /hotel-Janauba/ no GitHub Pages); raiz por padrão.
+    base: process.env.BASE_PATH || '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

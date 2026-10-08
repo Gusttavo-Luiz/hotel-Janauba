@@ -42,6 +42,16 @@ Variáveis ficam em **projeto → Settings → Variables and Secrets** (ambiente
 
 Perfil no Google, Search Console, domínio próprio e métricas: veja o passo a passo em [`docs/guia-google-e-dominio.md`](docs/guia-google-e-dominio.md).
 
+## Cópia de visualização no GitHub Pages
+
+A cada push na `main`, o workflow `.github/workflows/github-pages.yml` publica uma cópia do site em `https://gusttavo-luiz.github.io/hotel-Janauba/`. Ela serve para visualizar o site e fica marcada para não ser indexada (o endereço oficial continua sendo o do Cloudflare ou o domínio próprio).
+
+Para ativar (uma vez):
+
+1. No GitHub, em **Settings → General → Default branch**, deixe a `main` como branch padrão (o ambiente `github-pages` só aceita publicações da branch padrão).
+2. Em **Settings → Pages → Build and deployment → Source**, escolha **GitHub Actions**.
+3. Em **Actions → Publicar no GitHub Pages → Run workflow**, rode a primeira publicação (as próximas são automáticas).
+
 ## Métricas de acesso
 
 O site usa o **Cloudflare Web Analytics** (grátis, anônimo e sem cookies), que não exige código: no projeto do Pages, abra **Metrics → Web Analytics → Enable**. A partir do deploy seguinte, o painel mostra visitas, páginas mais vistas, origem do tráfego, países, dispositivos e a velocidade de carregamento. Cliques em botões não são registrados.
@@ -68,6 +78,8 @@ Copie `.env.example` para `.env` e preencha:
 | `VITE_SITE_URL` | Domínio final (ex.: `https://www.hotelpremierjanauba.com.br`). Ativa canonical, `og:url`, `sitemap.xml` e `robots.txt` com sitemap. |
 | `VITE_CONTACT_ENDPOINT` | Opcional. URL que recebe o formulário de contato (POST JSON), ex.: `/api/contact`. Sem ela, a mensagem é enviada pelo WhatsApp da recepção. |
 | `VITE_GOOGLE_SITE_VERIFICATION` | Opcional. Código de verificação do Google Search Console (método "Tag HTML"). |
+| `VITE_NOINDEX` | Opcional. `true` pede aos buscadores para não indexar o site (usado na cópia do GitHub Pages). |
+| `BASE_PATH` | Opcional, só no build. Subcaminho de publicação, ex.: `/hotel-Janauba/` no GitHub Pages. |
 | `VITE_SHOW_PLACEHOLDERS` | Opcional. `true` mostra no site publicado os espaços reservados para fotos ainda não enviadas. |
 | `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | Só no servidor (Cloudflare). Envio do formulário por e-mail; veja acima. |
 
