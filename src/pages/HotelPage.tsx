@@ -4,6 +4,7 @@ import { images } from '@/data/content';
 import { hotel } from '@/data/hotel';
 import { Icon } from '@/components/ui/Icon';
 import { Media } from '@/components/ui/Media';
+import { AddressArt, RatingArt } from '@/components/ui/arts';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { CtaBand } from '@/components/sections/CtaBand';
 import { Faq } from '@/components/sections/Faq';
@@ -55,8 +56,8 @@ export default function HotelPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4" data-reveal>
-            <Media image={images.aboutDetail} className="aspect-[3/4] rounded-2xl" tone="dark" sizes="25vw" />
-            <Media image={images.about} className="mt-12 aspect-[3/4] rounded-2xl" sizes="25vw" />
+            <Media image={images.aboutDetail} art={<RatingArt />} className="aspect-[3/4] rounded-2xl" tone="dark" sizes="25vw" />
+            <Media image={images.about} art={<AddressArt size="sm" />} className="mt-12 aspect-[3/4] rounded-2xl" sizes="25vw" />
           </div>
         </div>
       </section>

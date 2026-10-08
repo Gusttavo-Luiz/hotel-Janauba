@@ -7,6 +7,7 @@ import { cn, formatScore } from '@/lib/utils';
 import { ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Media } from '@/components/ui/Media';
+import { AddressArt, RatingArt } from '@/components/ui/arts';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
 const highlights = ['reception', 'wifi', 'parking', 'pets']
@@ -28,9 +29,9 @@ export function About() {
     <section id="o-hotel" aria-labelledby="sobre-title" className="scroll-mt-20 py-24 sm:py-32">
       <div className="container-x grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
         <div className="relative lg:col-span-6" data-reveal>
-          <Media image={images.about} className="aspect-[4/5] rounded-2xl sm:aspect-[5/5] lg:aspect-[4/5]" sizes="(min-width: 1024px) 45vw, 100vw" />
+          <Media image={images.about} art={<AddressArt size="lg" />} className="aspect-[4/5] rounded-2xl sm:aspect-[5/5] lg:aspect-[4/5]" sizes="(min-width: 1024px) 45vw, 100vw" />
           <div className="absolute -right-3 -bottom-8 hidden w-[46%] overflow-hidden rounded-xl border-[6px] border-ivory shadow-lift sm:block lg:-right-10">
-            <Media image={images.aboutDetail} className="aspect-[4/5]" tone="dark" sizes="20vw" />
+            <Media image={images.aboutDetail} art={<RatingArt />} className="aspect-[4/5]" tone="dark" sizes="20vw" />
           </div>
           <div className="absolute top-6 -left-3 hidden rounded-xl bg-ink px-5 py-4 text-white shadow-lift sm:block lg:-left-8">
             <p className="font-serif text-4xl leading-none text-gold-light">24h</p>

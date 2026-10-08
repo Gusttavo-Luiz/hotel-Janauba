@@ -7,6 +7,7 @@ import type { Room } from '@/types';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { Media } from '@/components/ui/Media';
+import { RoomArt } from '@/components/ui/arts';
 
 export function RoomCard({ room, headingLevel = 'h3' }: { room: Room; headingLevel?: 'h2' | 'h3' }) {
   const { openBooking } = useBooking();
@@ -19,6 +20,7 @@ export function RoomCard({ room, headingLevel = 'h3' }: { room: Room; headingLev
       <Link to={href} tabIndex={-1} aria-hidden="true" className="relative block overflow-hidden">
         <Media
           image={room.images[0]}
+          art={<RoomArt room={room} />}
           className="aspect-[4/3] transition-transform duration-700 ease-[var(--ease-elegant)] group-hover:scale-[1.04]"
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         />
