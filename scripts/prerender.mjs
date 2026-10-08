@@ -41,13 +41,14 @@ function writePage(url, outFile) {
 
 console.log('Pré-renderizando páginas…');
 for (const route of allRoutes) {
-  const file = route.path === '/' ? 'index.html' : `${route.path.slice(1)}/index.html`;
+  // rota.html: o Cloudflare Pages serve /rota sem redirecionar para /rota/
+  const file = route.path === '/' ? 'index.html' : `${route.path.slice(1)}.html`;
   writePage(route.path, path.join(clientDir, file));
 }
 writePage('/404', path.join(clientDir, '404.html'));
 
-// Deploys de pré-visualização da Vercel não devem ser indexados.
-if (process.env.VERCEL_ENV === 'preview') {
+// Deploys de pré-visualização do Cloudflare Pages (branches fora da main) não devem ser indexados.
+if (process.env.CF_PAGES && process.env.CF_PAGES_BRANCH !== 'main') {
   fs.writeFileSync(path.join(clientDir, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
   console.log('  ✓ robots.txt bloqueando indexação (deploy de pré-visualização)');
 }
