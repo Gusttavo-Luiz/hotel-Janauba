@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  Fonte da imagem de compartilhamento (public/og-image.jpg, 1200×630).
+  Para regerar: npm run og-image (requer Playwright/Chromium instalado).
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        font-weight: 500;
+        src: url('../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        font-weight: 600;
+        src: url('../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        font-style: italic;
+        font-weight: 400;
+        src: url('../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Manrope';
+        font-weight: 200 800;
+        src: url('../node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2') format('woff2');
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        font-family: 'Manrope', sans-serif;
+        color: #fff;
+        background:
+          radial-gradient(ellipse 70% 60% at 80% 15%, rgb(196 162 113 / 0.3), transparent 60%),
+          radial-gradient(ellipse 60% 50% at 5% 100%, rgb(133 102 58 / 0.28), transparent 60%),
+          linear-gradient(160deg, #211e1a 0%, #141311 55%, #0d0c0b 100%);
+        position: relative;
+      }
+      .arches { position: absolute; right: -40px; top: -60px; height: 780px; color: rgb(220 197 159 / 0.16); }
+      .frame { position: absolute; inset: 28px; border: 1px solid rgb(220 197 159 / 0.22); border-radius: 6px; }
+      .content { position: absolute; left: 96px; top: 92px; right: 380px; }
+      .logo { display: flex; align-items: center; gap: 22px; }
+      .mark { width: 62px; height: 62px; border: 1.5px solid rgb(220 197 159 / 0.75); transform: rotate(45deg); display: grid; place-items: center; }
+      .mark span { transform: rotate(-45deg); font-family: 'Cormorant Garamond'; font-weight: 600; font-size: 32px; color: #dcc59f; }
+      .wordmark b { display: block; font-family: 'Cormorant Garamond'; font-weight: 600; font-size: 34px; letter-spacing: 0.2em; line-height: 1; }
+      .wordmark small { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.42em; color: rgb(255 255 255 / 0.65); }
+      h1 { margin-top: 64px; font-family: 'Cormorant Garamond'; font-weight: 500; font-size: 96px; line-height: 0.95; letter-spacing: -0.01em; }
+      h1 em { display: block; font-style: italic; font-weight: 400; color: #dcc59f; }
+      .eyebrow { margin-top: 34px; display: flex; align-items: center; gap: 16px; font-size: 15px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: #dcc59f; }
+      .eyebrow::before { content: ''; width: 44px; height: 1px; background: currentColor; }
+      .chips { position: absolute; left: 96px; bottom: 76px; display: flex; gap: 12px; }
+      .chip { padding: 11px 20px; border: 1px solid rgb(255 255 255 / 0.2); border-radius: 999px; font-size: 17px; font-weight: 500; color: rgb(255 255 255 / 0.85); background: rgb(255 255 255 / 0.04); }
+      .chip.gold { background: #c4a271; border-color: #c4a271; color: #171614; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <svg class="arches" viewBox="0 0 600 800" fill="none" aria-hidden="true">
+      <path d="M 60 800 V 360 A 240 240 0 0 1 540 360 V 800" stroke="currentColor" />
+      <path d="M 100 800 V 372 A 200 200 0 0 1 500 372 V 800" stroke="currentColor" />
+      <path d="M 140 800 V 384 A 160 160 0 0 1 460 384 V 800" stroke="currentColor" />
+      <path d="M 180 800 V 396 A 120 120 0 0 1 420 396 V 800" stroke="currentColor" />
+      <path d="M 220 800 V 408 A 80 80 0 0 1 380 408 V 800" stroke="currentColor" />
+    </svg>
+    <div class="frame"></div>
+    <div class="content">
+      <div class="logo">
+        <div class="mark"><span>P</span></div>
+        <div class="wordmark"><b>PREMIER</b><small>HOTEL · JANAÚBA</small></div>
+      </div>
+      <h1>Hotel Premier <em>Janaúba</em></h1>
+      <p class="eyebrow">Centro · Janaúba · Minas Gerais</p>
+    </div>
+    <div class="chips">
+      <span class="chip gold">★ 4,3 no Google</span>
+      <span class="chip">Recepção 24h</span>
+      <span class="chip">Wi-Fi grátis</span>
+      <span class="chip">Estacionamento incluso</span>
+    </div>
+  </body>
+</html>

@@ -65,8 +65,9 @@ export function Header() {
         Pular para o conteúdo
       </a>
       <div className="container-x flex items-center justify-between gap-6">
-        <Link to="/" aria-label={`${hotel.name} — página inicial`} className="relative z-50 shrink-0">
+        <Link to="/" className="relative z-50 shrink-0">
           <Logo tone={solid ? 'dark' : 'light'} />
+          <span className="sr-only"> — página inicial</span>
         </Link>
 
         <nav aria-label="Menu principal" className="hidden lg:block">

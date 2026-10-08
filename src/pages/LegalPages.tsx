@@ -57,7 +57,13 @@ export function PrivacyPage() {
       <p>
         Alguns recursos direcionam você para serviços externos, que possuem políticas próprias: WhatsApp (envio de
         mensagens), Booking.com (consulta de tarifas e reservas), Google Maps (mapa e rotas), Instagram e Tripadvisor.
+        Quando o formulário de contato é enviado por e-mail, a mensagem passa pelo serviço de envio Resend.
         O mapa do Google só é carregado quando você clica em “Carregar mapa interativo”.
+      </p>
+      <h2>Métricas de acesso</h2>
+      <p>
+        Usamos o Vercel Web Analytics para contar visitas, páginas vistas e cliques em botões como “Reservar” e
+        “WhatsApp”. Os dados são anônimos e agregados, não identificam o visitante e não utilizam cookies.
       </p>
       <h2>Cookies</h2>
       <p>

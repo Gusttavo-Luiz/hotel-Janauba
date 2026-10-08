@@ -32,7 +32,7 @@ export function Logo({ tone = 'dark', className }: { tone?: 'dark' | 'light'; cl
           )}
         >
           PREMIER
-        </span>
+        </span>{' '}
         <span
           className={cn(
             'mt-1 text-[0.56rem] font-semibold tracking-[0.42em] transition-colors duration-500',

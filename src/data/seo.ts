@@ -12,6 +12,14 @@ export interface RouteMeta {
 
 const brand = hotel.name;
 
+/** Imagem de prévia ao compartilhar o link (WhatsApp, Instagram, Facebook…). */
+export const shareImage = {
+  path: '/og-image.jpg',
+  width: 1200,
+  height: 630,
+  alt: `${hotel.name} — hotel no Centro de Janaúba, Minas Gerais`,
+};
+
 export const staticRoutes: RouteMeta[] = [
   {
     path: '/',
@@ -76,7 +84,7 @@ export function hotelJsonLd() {
     '@type': 'Hotel',
     name: hotel.name,
     description: hotel.about[0],
-    ...(url ? { url, '@id': `${url}#hotel` } : {}),
+    ...(url ? { url, '@id': `${url}#hotel`, image: absoluteUrl(shareImage.path) } : {}),
     telephone: hotel.contact.phoneE164,
     ...(hotel.contact.email ? { email: hotel.contact.email } : {}),
     address: {

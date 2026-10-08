@@ -25,6 +25,25 @@ O `vercel.json` já define instalação, build, pasta publicada (`dist/client`),
 
 Sem `VITE_SITE_URL`, o build de produção usa o domínio `*.vercel.app` do projeto para canonical e `sitemap.xml`. Deploys de pré-visualização publicam um `robots.txt` que bloqueia a indexação.
 
+Perfil no Google, Search Console, domínio próprio e ativação das métricas: veja o passo a passo em [`docs/guia-google-e-dominio.md`](docs/guia-google-e-dominio.md).
+
+## Métricas de acesso
+
+O site usa o Vercel Web Analytics (anônimo, sem cookies), ativo apenas em builds feitos na Vercel. Para ligar: projeto na Vercel → aba **Analytics** → **Enable** → Redeploy. Além das visitas, o site registra os eventos "Abrir reserva", "Ver disponibilidade", "WhatsApp", "Booking.com", "Ligar", "Como chegar", "Instagram" e "Mensagem enviada" (a seção de eventos do painel exige um plano pago da Vercel).
+
+## Formulário de contato por e-mail
+
+Por padrão, o formulário abre o WhatsApp da recepção com a mensagem pronta. Para receber por e-mail, usando a função `api/contact.ts`:
+
+1. Crie uma conta em [resend.com](https://resend.com) e gere uma chave em **API Keys**.
+2. Na Vercel (**Settings → Environment Variables**, ambiente Production), crie:
+   - `RESEND_API_KEY`: a chave do Resend (fica só no servidor)
+   - `CONTACT_TO_EMAIL`: o e-mail do hotel que vai receber as mensagens
+   - `VITE_CONTACT_ENDPOINT`: `/api/contact`
+3. Faça um Redeploy.
+
+Sem domínio verificado no Resend, o remetente padrão (`onboarding@resend.dev`) só entrega mensagens para o e-mail dono da conta Resend; por isso, crie a conta com o e-mail do hotel. Com domínio próprio, verifique-o no Resend e defina também `CONTACT_FROM_EMAIL` (ex.: `Site Hotel Premier <contato@seudominio.com.br>`). Se o envio falhar, o visitante vê a opção de mandar a mesma mensagem pelo WhatsApp.
+
 ## Variáveis de ambiente
 
 Copie `.env.example` para `.env` e preencha:
@@ -32,7 +51,10 @@ Copie `.env.example` para `.env` e preencha:
 | Variável | Uso |
 | --- | --- |
 | `VITE_SITE_URL` | Domínio final (ex.: `https://www.hotelpremierjanauba.com.br`). Ativa canonical, `og:url`, `sitemap.xml` e `robots.txt` com sitemap. |
-| `VITE_CONTACT_ENDPOINT` | Opcional. URL que recebe o formulário de contato (POST JSON). Sem ela, a mensagem é enviada pelo WhatsApp da recepção. |
+| `VITE_CONTACT_ENDPOINT` | Opcional. URL que recebe o formulário de contato (POST JSON), ex.: `/api/contact`. Sem ela, a mensagem é enviada pelo WhatsApp da recepção. |
+| `VITE_GOOGLE_SITE_VERIFICATION` | Opcional. Código de verificação do Google Search Console (método "Tag HTML"). |
+| `VITE_SHOW_PLACEHOLDERS` | Opcional. `true` mostra no site publicado os espaços reservados para fotos ainda não enviadas. |
+| `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL` | Só no servidor (Vercel). Envio do formulário por e-mail; veja abaixo. |
 
 > Variáveis `VITE_*` ficam públicas no navegador: **nunca** coloque senhas, tokens ou chaves privadas nelas.
 
@@ -52,7 +74,7 @@ Campos com `null` ainda não foram informados: a seção correspondente fica ocu
 
 ## Fotos
 
-Ainda não recebemos fotos oficiais do hotel. Todos os espaços de imagem exibem um **placeholder identificado** ("Espaço para foto · …") para não induzir o visitante a erro com imagens genéricas.
+Ainda não recebemos fotos oficiais do hotel, e o site não usa imagens genéricas que poderiam ser confundidas com o hotel. Em desenvolvimento, cada espaço de imagem mostra um **placeholder identificado** ("Espaço para foto · …"). No site publicado, os espaços aparecem sem rótulo, e a galeria (com o item "Galeria" do menu) fica oculta até a primeira foto ser adicionada. Para ver os rótulos no site publicado, defina `VITE_SHOW_PLACEHOLDERS=true`.
 
 Para adicionar as fotos reais:
 
@@ -71,7 +93,11 @@ hero: {
 },
 ```
 
-As imagens usam lazy loading e `srcset` responsivo. Para ocultar os rótulos dos placeholders, altere `showPlaceholderLabels` em `src/config/site.ts`.
+As imagens usam lazy loading e `srcset` responsivo.
+
+## Imagem de compartilhamento
+
+`public/og-image.jpg` (1200×630) é a prévia exibida quando o link do site é compartilhado no WhatsApp, Instagram ou Facebook. Ela é gerada a partir de `scripts/og-image.html`; depois de editar o HTML, rode `npm run og-image` (requer o Playwright instalado: `npm i -D playwright`).
 
 ## Reservas
 
@@ -99,7 +125,10 @@ src/
   lib/          utilitários (datas, preços)
   pages/        páginas (home, o hotel, acomodações, quarto, legais, 404)
   services/     reservas, contato e WhatsApp
-scripts/prerender.mjs   gera o HTML estático de cada rota
+api/contact.ts          função da Vercel que envia o formulário por e-mail
+scripts/prerender.mjs   gera o HTML estático de cada rota (com CSS embutido)
+scripts/og-image.*      gera a imagem de compartilhamento
+docs/                   guias (Google, Search Console, domínio, métricas)
 ```
 
 ## Informações pendentes (a confirmar com o hotel)

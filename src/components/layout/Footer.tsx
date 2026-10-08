@@ -28,8 +28,9 @@ export function Footer() {
     <footer className="grain relative bg-ink text-white">
       <div className="container-x relative grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8 lg:py-20">
         <div className="sm:col-span-2 lg:col-span-4">
-          <Link to="/" aria-label={`${hotel.name} — página inicial`}>
+          <Link to="/">
             <Logo tone="light" />
+            <span className="sr-only"> — página inicial</span>
           </Link>
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/65">
             Hospedagem no Centro de Janaúba (MG), com recepção 24 horas, Wi-Fi gratuito, estacionamento incluso e
