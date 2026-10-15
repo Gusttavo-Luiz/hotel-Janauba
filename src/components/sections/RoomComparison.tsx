@@ -41,7 +41,7 @@ export function RoomComparison() {
       </h2>
       <p className="mt-3 text-sm text-stone sm:hidden">Arraste a tabela para o lado para comparar todos.</p>
 
-      <div className="-mx-5 mt-10 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0">
+      <div className="relative -mx-5 mt-10 overflow-x-auto px-5 pb-2 sm:mx-0 sm:px-0">
         <table className="w-full min-w-[34rem] sm:min-w-[40rem] border-separate border-spacing-0 overflow-hidden rounded-2xl border border-ink/10 bg-white text-left text-sm">
           <caption className="sr-only">Comparação entre as acomodações do Hotel Premier Janaúba</caption>
           <thead>

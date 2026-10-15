@@ -32,3 +32,22 @@ test.describe('Celular', () => {
     await expect(page.getByRole('button', { name: 'Abrir menu' })).toBeFocused();
   });
 });
+
+test.describe('Celular estreito (360 px)', () => {
+  test.use({ viewport: { width: 360, height: 760 } });
+  test.beforeEach(({ isMobile }) => test.skip(!isMobile, 'só no celular'));
+
+  for (const route of ['/', '/o-hotel', '/acomodacoes', '/acomodacoes/quarto-familia', '/politica-de-privacidade']) {
+    test(`${route} cabe na tela, sem rolagem lateral`, async ({ page }) => {
+      await page.goto(route);
+      const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
+      }));
+      expect(innerWidth).toBe(360);
+      expect(scrollWidth).toBeLessThanOrEqual(360);
+      const menu = await page.getByRole('button', { name: 'Abrir menu' }).boundingBox();
+      expect(menu!.x + menu!.width).toBeLessThanOrEqual(360);
+    });
+  }
+});

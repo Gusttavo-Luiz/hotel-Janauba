@@ -64,7 +64,7 @@ export function Header() {
       >
         Pular para o conteúdo
       </a>
-      <div className="container-x flex items-center justify-between gap-6">
+      <div className="container-x flex items-center justify-between gap-6 max-[399px]:gap-3">
         <Link to="/" className="relative z-50 shrink-0">
           <Logo tone={solid ? 'dark' : 'light'} />
           <span className="sr-only"> — página inicial</span>
