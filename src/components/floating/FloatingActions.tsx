@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { ArrowUp } from 'lucide-react';
-import { BOOKING_SECTION_ID, useBooking } from '@/context/BookingContext';
-import { rooms } from '@/data/rooms';
+import { BOOKING_SECTION_ID, ROOM_BOOKING_ID, useBooking } from '@/context/BookingContext';
+import { getRoom, rooms } from '@/data/rooms';
 import { useScrolled } from '@/hooks';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn, formatPrice, nightsBetween } from '@/lib/utils';
 import { whatsappUrl } from '@/services/whatsapp';
 import { WhatsAppIcon } from '@/components/ui/Icon';
 
-/** id do formulário de reserva lateral da página de cada quarto. */
-export const ROOM_BOOKING_ID = 'reservar-quarto';
-
 const prices = rooms.map((r) => r.priceFrom).filter((p): p is number => typeof p === 'number');
 const minPrice = prices.length ? Math.min(...prices) : null;
+
+const shortDate = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).replace(' de ', ' ').replace('.', '');
+};
 
 /** `true` enquanto algum formulário de reserva está visível na tela. */
 function useBookingFormInView() {
@@ -42,15 +44,15 @@ function useBookingFormInView() {
 export function FloatingActions() {
   const scrolled = useScrolled(600);
   const formInView = useBookingFormInView();
-  const { openBooking } = useBooking();
+  const { openBooking, stay } = useBooking();
+  const { pathname } = useLocation();
   const wa = whatsappUrl();
   const showBar = scrolled && !formInView;
 
-  const reserve = () => {
-    const roomForm = document.getElementById(ROOM_BOOKING_ID);
-    if (roomForm) roomForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else openBooking();
-  };
+  // Na página de um quarto, mostra o preço dele; nas demais, o menor preço.
+  const pageRoom = getRoom(pathname.match(/^\/acomodacoes\/([^/]+)/)?.[1]);
+  const price = pageRoom ? (pageRoom.priceFrom ?? null) : minPrice;
+  const nights = stay.checkIn && stay.checkOut ? nightsBetween(stay.checkIn, stay.checkOut) : 0;
 
   return (
     <>
@@ -103,14 +105,23 @@ export function FloatingActions() {
         )}
       >
         <div className="flex items-center gap-3 px-4 py-3">
-          {minPrice !== null && (
+          {nights > 0 ? (
             <p className="min-w-0 flex-1 text-xs leading-tight text-white/60">
-              a partir de
-              <span className="block font-serif text-xl text-white">
-                {formatPrice(minPrice)}
-                <span className="font-sans text-xs text-white/50"> /noite*</span>
+              <span className="block truncate font-serif text-lg text-white">
+                {shortDate(stay.checkIn)} → {shortDate(stay.checkOut)}
               </span>
+              {nights} {nights === 1 ? 'noite' : 'noites'} · {stay.guests} {stay.guests === 1 ? 'hóspede' : 'hóspedes'}
             </p>
+          ) : (
+            price !== null && (
+              <p className="min-w-0 flex-1 text-xs leading-tight text-white/60">
+                a partir de
+                <span className="block font-serif text-xl text-white">
+                  {formatPrice(price)}
+                  <span className="font-sans text-xs text-white/50"> /noite*</span>
+                </span>
+              </p>
+            )
           )}
           {wa && (
             <a
@@ -125,10 +136,10 @@ export function FloatingActions() {
           )}
           <button
             type="button"
-            onClick={reserve}
+            onClick={() => openBooking()}
             className={cn(
               'h-12 rounded-full bg-gold px-6 text-[0.78rem] font-semibold tracking-[0.06em] text-ink uppercase transition active:scale-[0.98]',
-              minPrice === null && 'flex-1',
+              nights === 0 && price === null && 'flex-1',
             )}
           >
             Reservar

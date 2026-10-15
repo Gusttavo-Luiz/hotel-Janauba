@@ -21,13 +21,18 @@ interface BookingContextValue {
   updateStay: (patch: Partial<Stay>) => void;
   /** Incrementa a cada pedido de foco no formulário de reserva. */
   focusSignal: number;
-  /** Leva o usuário ao formulário de reserva da página inicial. */
+  /**
+   * Leva o usuário ao formulário de reserva: o da página do quarto, se houver
+   * e nenhuma outra acomodação for pedida; senão, o da página inicial.
+   */
   openBooking: (slug?: string) => void;
 }
 
 const BookingContext = createContext<BookingContextValue | null>(null);
 
 export const BOOKING_SECTION_ID = 'reservar';
+/** id do formulário de reserva lateral da página de cada quarto. */
+export const ROOM_BOOKING_ID = 'reservar-quarto';
 
 const STORAGE_KEY = 'hotel-premier:estadia';
 const defaultStay: Stay = { checkIn: '', checkOut: '', guests: 2, rooms: 1 };
@@ -94,6 +99,12 @@ export function BookingProvider({ children }: { children: ReactNode }) {
 
   const openBooking = useCallback(
     (slug?: string) => {
+      const roomForm = document.getElementById(ROOM_BOOKING_ID);
+      if (roomForm && slug === undefined) {
+        setFocusSignal((n) => n + 1);
+        roomForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       if (slug !== undefined) setRoomSlug(slug);
       setFocusSignal((n) => n + 1);
       if (pathname !== '/') {
