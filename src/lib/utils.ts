@@ -36,3 +36,13 @@ export const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /** Prefixa caminhos absolutos de arquivos públicos (ex.: '/images/a.webp') com o subcaminho do site. */
 export const withBase = (p: string) => (p.startsWith('/') && !p.startsWith('//') ? `${basePath}${p}` : p);
+
+/** Copia um texto para a área de transferência; retorna `false` se o navegador não permitir. */
+export async function copyText(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    return false;
+  }
+}
