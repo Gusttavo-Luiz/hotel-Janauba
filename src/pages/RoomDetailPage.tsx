@@ -5,7 +5,7 @@ import { getAmenity } from '@/data/amenities';
 import { hotel } from '@/data/hotel';
 import { getRoom, priceDisclaimer, rooms } from '@/data/rooms';
 import { siteConfig } from '@/config/site';
-import { formatPrice } from '@/lib/utils';
+import { copyText, formatPrice } from '@/lib/utils';
 import { whatsappUrl } from '@/services/whatsapp';
 import { BookingForm } from '@/components/booking/BookingForm';
 import { ButtonAnchor } from '@/components/ui/Button';
@@ -22,16 +22,14 @@ function ShareButton({ title }: { title: string }) {
   const [copied, setCopied] = useState(false);
   const share = async () => {
     const url = window.location.href;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title, url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
+    if (navigator.share) {
+      // rejeita quando o usuário cancela o compartilhamento
+      await navigator.share({ title, url }).catch(() => {});
+      return;
+    }
+    if (await copyText(url)) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
-    } catch {
-      /* compartilhamento cancelado pelo usuário */
     }
   };
   return (

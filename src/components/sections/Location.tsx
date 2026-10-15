@@ -3,11 +3,13 @@ import { ArrowUpRight, MapPin, Navigation } from 'lucide-react';
 import { nearby } from '@/data/content';
 import { fullAddress, hotel } from '@/data/hotel';
 import { ButtonAnchor, Button } from '@/components/ui/Button';
+import { CopyButton } from '@/components/ui/CopyButton';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
 const mapQuery = `${hotel.name}, ${hotel.address.street}, ${hotel.address.city} - ${hotel.address.state}, ${hotel.address.postalCode}`;
 const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
 export const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
+const wazeUrl = `https://waze.com/ul?q=${encodeURIComponent(`${hotel.address.street}, ${hotel.address.city} - ${hotel.address.state}`)}&navigate=yes`;
 
 /** Mapa carregado sob demanda (mais rápido e sem cookies de terceiros até o clique). */
 function MapEmbed() {
@@ -80,6 +82,9 @@ export function Location() {
               {hotel.address.neighborhood} · {hotel.address.city} – {hotel.address.stateName}
               <br />
               CEP {hotel.address.postalCode}
+              <span className="mt-3 block">
+                <CopyButton text={fullAddress} label="Copiar endereço" copiedLabel="Endereço copiado!" />
+              </span>
             </span>
           </address>
 
@@ -109,13 +114,16 @@ export function Location() {
             <p className="mt-3 text-xs text-stone">Tempos aproximados de deslocamento, segundo o Google.</p>
           </div>
 
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row" data-reveal>
-            <ButtonAnchor href={directionsUrl} variant="dark">
+          <div className="mt-9 grid max-w-md grid-cols-2 gap-3" data-reveal>
+            <ButtonAnchor href={directionsUrl} variant="dark" className="col-span-2">
               <Navigation className="h-4 w-4" aria-hidden="true" />
               Como chegar
             </ButtonAnchor>
-            <ButtonAnchor href={hotel.links.googleMaps} variant="outline">
-              Abrir no Google Maps
+            <ButtonAnchor href={wazeUrl} variant="outline" size="sm" className="py-3" aria-label="Abrir no Waze">
+              Waze
+            </ButtonAnchor>
+            <ButtonAnchor href={hotel.links.googleMaps} variant="outline" size="sm" className="py-3" aria-label="Abrir no Google Maps">
+              Google Maps
             </ButtonAnchor>
           </div>
         </div>
