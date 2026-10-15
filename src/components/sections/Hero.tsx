@@ -4,17 +4,26 @@ import { siteConfig } from '@/config/site';
 import { images } from '@/data/content';
 import { hotel, ratings } from '@/data/hotel';
 import { useBooking } from '@/context/BookingContext';
-import { formatScore } from '@/lib/utils';
+import { cn, formatScore } from '@/lib/utils';
 import { ArchMotif } from '@/components/ui/ArchMotif';
 import { Button, ButtonLink } from '@/components/ui/Button';
 import { Media } from '@/components/ui/Media';
 
-/** Fundo decorativo usado enquanto a foto real da fachada não é enviada. */
-export function HeroBackdrop() {
+/**
+ * Fundo decorativo usado enquanto a foto real da fachada não é enviada.
+ * `viewport`: o arco é medido pela altura da tela, não da seção — assim ele não
+ * se desloca quando as fontes carregam e a seção muda de altura (CLS).
+ */
+export function HeroBackdrop({ viewport = false }: { viewport?: boolean }) {
   return (
     <div className="grain absolute inset-0 bg-[#141311]" aria-hidden="true">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_78%_18%,rgb(196_162_113/0.28),transparent_60%),radial-gradient(ellipse_60%_50%_at_8%_100%,rgb(133_102_58/0.25),transparent_60%),linear-gradient(160deg,#211e1a_0%,#141311_55%,#0d0c0b_100%)]" />
-      <ArchMotif className="absolute top-1/2 right-[-18%] h-[130%] -translate-y-1/2 text-gold-light/[0.13] sm:right-[-8%] lg:right-[-2%]" />
+      <ArchMotif
+        className={cn(
+          'absolute right-[-18%] text-gold-light/[0.13] sm:right-[-8%] lg:right-[-2%]',
+          viewport ? 'top-[-15svh] h-[125svh] sm:top-[-17svh] sm:h-[128svh]' : 'top-1/2 h-[130%] -translate-y-1/2',
+        )}
+      />
     </div>
   );
 }
@@ -54,7 +63,7 @@ export function Hero() {
         {images.hero.src ? (
           <Media image={images.hero} priority className="h-full w-full" />
         ) : (
-          <HeroBackdrop />
+          <HeroBackdrop viewport />
         )}
       </div>
       {!images.hero.src && siteConfig.showPlaceholderLabels && (
