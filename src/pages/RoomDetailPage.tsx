@@ -15,7 +15,7 @@ import { RoomArt } from '@/components/ui/arts';
 import { Lightbox } from '@/components/sections/Lightbox';
 import { PageHero } from '@/components/sections/PageHero';
 import { RoomCard } from '@/components/sections/RoomCard';
-import { ROOM_BOOKING_ID } from '@/components/floating/FloatingActions';
+import { ROOM_BOOKING_ID } from '@/context/BookingContext';
 import NotFoundPage from './NotFoundPage';
 
 function ShareButton({ title }: { title: string }) {

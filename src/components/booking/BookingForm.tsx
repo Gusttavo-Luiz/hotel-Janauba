@@ -56,12 +56,13 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
 
   useEffect(() => setToday(toISODate(new Date())), []);
 
+  // Cada página tem um único formulário de reserva: é ele que recebe o foco.
   useEffect(() => {
-    if (isBar && booking.focusSignal > 0) {
+    if (booking.focusSignal > 0) {
       const t = window.setTimeout(() => checkInRef.current?.focus({ preventScroll: true }), 450);
       return () => window.clearTimeout(t);
     }
-  }, [isBar, booking.focusSignal]);
+  }, [booking.focusSignal]);
 
   const request: BookingRequest = {
     checkIn,
