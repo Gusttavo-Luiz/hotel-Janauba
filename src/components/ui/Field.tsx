@@ -18,7 +18,7 @@ export function Field({ id, label, error, hint, optional, className, children }:
     <div className={cn('min-w-0', className)}>
       <label htmlFor={id} className="field-label">
         {label}
-        {optional && <span className="ml-1 tracking-normal normal-case opacity-70">(opcional)</span>}
+        {optional && <span className="ml-1 font-normal tracking-normal normal-case">(opcional)</span>}
       </label>
       {children}
       {error ? (
