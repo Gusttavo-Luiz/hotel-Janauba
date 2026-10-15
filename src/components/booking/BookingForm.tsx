@@ -14,6 +14,7 @@ import {
 import { Button, ButtonAnchor } from '@/components/ui/Button';
 import { Field, fieldAria } from '@/components/ui/Field';
 import { DateRangePicker } from './DateRangePicker';
+import { GuestsPicker } from './GuestsPicker';
 import { WhatsAppIcon } from '@/components/ui/Icon';
 
 interface BookingFormProps {
@@ -85,7 +86,8 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
     setErrors(found);
     const firstError = Object.keys(found)[0];
     if (firstError) {
-      document.getElementById(fid(firstError))?.focus();
+      // hóspedes e quartos ficam no mesmo campo
+      document.getElementById(fid(firstError === 'rooms' ? 'guests' : firstError))?.focus();
       return;
     }
     setResult({ ...buildBookingOptions(request), summary: bookingSummary(request) });
@@ -97,8 +99,6 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
     checkInRef.current?.focus();
   };
 
-  const guestOptions = Array.from({ length: bookingConfig.maxGuests }, (_, i) => i + 1);
-  const roomOptions = Array.from({ length: bookingConfig.maxRooms }, (_, i) => i + 1);
 
   return (
     <div>
@@ -131,34 +131,19 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
           twoMonths={isBar}
           checkInRef={checkInRef}
         />
-        <Field id={fid('guests')} label="Hóspedes" error={errors.guests}>
-          <select
-            className="field-input"
-            value={guests}
-            onChange={(e) => setGuests(Number(e.target.value))}
-            {...fieldAria(fid('guests'), errors.guests)}
-          >
-            {guestOptions.map((n) => (
-              <option key={n} value={n}>
-                {n} {n === 1 ? 'hóspede' : 'hóspedes'}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field id={fid('rooms')} label="Quartos" error={errors.rooms}>
-          <select
-            className="field-input"
-            value={roomsCount}
-            onChange={(e) => setRoomsCount(Number(e.target.value))}
-            {...fieldAria(fid('rooms'), errors.rooms)}
-          >
-            {roomOptions.map((n) => (
-              <option key={n} value={n}>
-                {n} {n === 1 ? 'quarto' : 'quartos'}
-              </option>
-            ))}
-          </select>
-        </Field>
+        <GuestsPicker
+          guests={guests}
+          rooms={roomsCount}
+          onChange={(g, r) => {
+            setGuests(g);
+            setRoomsCount(r);
+          }}
+          maxGuests={bookingConfig.maxGuests}
+          maxRooms={bookingConfig.maxRooms}
+          roomSlug={roomSlug || undefined}
+          id={fid('guests')}
+          error={errors.guests ?? errors.rooms}
+        />
 
         {!fixedRoom && (
           <Field id={fid('roomSlug')} label="Acomodação" className="col-span-2 md:col-span-2 lg:col-span-1">

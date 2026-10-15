@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { CtaBand } from '@/components/sections/CtaBand';
 import { PageHero } from '@/components/sections/PageHero';
 import { RoomCard } from '@/components/sections/RoomCard';
+import { RoomComparison } from '@/components/sections/RoomComparison';
 
 // A menor capacidade equivale a "Todas", por isso fica fora dos filtros.
 const capacities = [...new Set(rooms.map((r) => r.capacity))].sort((a, b) => a - b).slice(1);
@@ -58,7 +59,8 @@ export default function RoomsPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-8 text-xs leading-relaxed text-stone">* {priceDisclaimer}</p>
+          <RoomComparison />
+          <p className="mt-6 text-xs leading-relaxed text-stone">* {priceDisclaimer}</p>
         </div>
       </section>
 
