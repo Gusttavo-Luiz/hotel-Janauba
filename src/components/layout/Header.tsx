@@ -35,7 +35,11 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const { openBooking } = useBooking();
-  const active = useActiveSection(pathname === '/');
+  const activeSection = useActiveSection(pathname === '/');
+  // Nas páginas internas, marca o item correspondente à página.
+  const pageSection = pathname.startsWith('/acomodacoes') ? 'acomodacoes' : pathname === '/o-hotel' ? 'o-hotel' : '';
+  const active = pathname === '/' ? activeSection : pageSection;
+  const ariaCurrent = (section: string) => (active === section ? (pathname === '/' ? 'true' : 'page') : undefined);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const wa = whatsappUrl();
 
@@ -64,7 +68,7 @@ export function Header() {
       >
         Pular para o conteúdo
       </a>
-      <div className="container-x flex items-center justify-between gap-6">
+      <div className="container-x flex items-center justify-between gap-6 max-[399px]:gap-3">
         <Link to="/" className="relative z-50 shrink-0">
           <Logo tone={solid ? 'dark' : 'light'} />
           <span className="sr-only"> — página inicial</span>
@@ -78,7 +82,7 @@ export function Header() {
                 <li key={item.section}>
                   <Link
                     to={sectionHref(item.section)}
-                    aria-current={isActive ? 'true' : undefined}
+                    aria-current={ariaCurrent(item.section)}
                     className={cn(
                       'relative px-2.5 py-2 text-[0.72rem] font-semibold tracking-[0.16em] uppercase transition-colors duration-300 xl:px-3',
                       'after:absolute after:inset-x-3 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-500 hover:after:scale-x-100',
@@ -119,7 +123,7 @@ export function Header() {
       <div
         id="menu-mobile"
         className={cn(
-          'grain fixed inset-0 z-40 flex flex-col bg-ink text-white transition-[opacity,visibility] duration-500 lg:hidden',
+          'grain fixed inset-0 z-40 flex flex-col overflow-y-auto overscroll-contain bg-ink text-white transition-[opacity,visibility] duration-500 lg:hidden',
           open ? 'visible opacity-100' : 'invisible opacity-0',
         )}
         aria-hidden={!open}
@@ -136,7 +140,11 @@ export function Header() {
                 <Link
                   to={sectionHref(item.section)}
                   onClick={close}
-                  className="group flex items-baseline gap-4 py-2 font-serif text-[2.1rem] leading-tight text-white/90 transition-colors hover:text-gold-light"
+                  aria-current={ariaCurrent(item.section)}
+                  className={cn(
+                    'group flex items-baseline gap-4 py-2 font-serif text-[2.1rem] leading-tight transition-colors hover:text-gold-light [@media(max-height:700px)]:py-1 [@media(max-height:700px)]:text-[1.8rem]',
+                    active === item.section ? 'text-gold-light' : 'text-white/90',
+                  )}
                 >
                   <span className="font-sans text-[0.65rem] tracking-[0.2em] text-gold-light/70">
                     {String(i + 1).padStart(2, '0')}
@@ -168,6 +176,9 @@ export function Header() {
               <Phone className="h-4 w-4" aria-hidden="true" /> Ligar
             </ButtonAnchor>
           </div>
+          <p className="pt-1 text-center text-xs text-white/60">
+            {hotel.address.street} · {hotel.address.neighborhood} · {hotel.contact.serviceHours}
+          </p>
         </div>
       </div>
     </header>

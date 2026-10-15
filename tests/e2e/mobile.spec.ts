@@ -21,6 +21,15 @@ test.describe('Celular', () => {
     await expect(bar(page)).toContainText('3 noites · 2 hóspedes');
   });
 
+  test('o menu marca a página atual e mostra o endereço', async ({ page }) => {
+    await page.goto('/acomodacoes');
+    await page.getByRole('button', { name: 'Abrir menu' }).click();
+    const menu = page.getByRole('navigation', { name: 'Menu mobile' });
+    await expect(menu.getByRole('link', { name: /Acomodações/ })).toHaveAttribute('aria-current', 'page');
+    await expect(menu.getByRole('link', { name: /Contato/ })).not.toHaveAttribute('aria-current', /.+/);
+    await expect(page.locator('#menu-mobile').getByText('Rua Inhumas, 175 · Centro · Recepção 24 horas')).toBeVisible();
+  });
+
   test('o menu abre e fecha', async ({ page }) => {
     await page.goto('/');
     const menu = page.locator('#menu-mobile');
@@ -31,4 +40,23 @@ test.describe('Celular', () => {
     await expect(menu).toBeHidden();
     await expect(page.getByRole('button', { name: 'Abrir menu' })).toBeFocused();
   });
+});
+
+test.describe('Celular estreito (360 px)', () => {
+  test.use({ viewport: { width: 360, height: 760 } });
+  test.beforeEach(({ isMobile }) => test.skip(!isMobile, 'só no celular'));
+
+  for (const route of ['/', '/o-hotel', '/acomodacoes', '/acomodacoes/quarto-familia', '/politica-de-privacidade']) {
+    test(`${route} cabe na tela, sem rolagem lateral`, async ({ page }) => {
+      await page.goto(route);
+      const { scrollWidth, innerWidth } = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
+      }));
+      expect(innerWidth).toBe(360);
+      expect(scrollWidth).toBeLessThanOrEqual(360);
+      const menu = await page.getByRole('button', { name: 'Abrir menu' }).boundingBox();
+      expect(menu!.x + menu!.width).toBeLessThanOrEqual(360);
+    });
+  }
 });

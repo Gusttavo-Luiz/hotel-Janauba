@@ -39,6 +39,15 @@ test.describe('Navegação', () => {
     await expect(page.locator('#reservar').getByLabel('Acomodação')).toHaveValue('quarto-familia');
   });
 
+  test('a troca de página tem fade, o primeiro carregamento não', async ({ page }) => {
+    await page.goto('/acomodacoes');
+    const wrapper = page.locator('main > div').first();
+    await expect(wrapper).not.toHaveClass(/animate-page-in/);
+    await page.getByRole('link', { name: 'Ver detalhes do Quarto Duplo' }).first().evaluate((el: HTMLElement) => el.click());
+    await expect(page).toHaveURL(/\/acomodacoes\/quarto-duplo$/);
+    await expect(page.locator('main > div').first()).toHaveClass(/animate-page-in/);
+  });
+
   test('endereço inexistente mostra a página 404', async ({ page }) => {
     await page.goto('/pagina-que-nao-existe');
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/não encontrada/i);

@@ -7,11 +7,11 @@ import { cn } from '@/lib/utils';
 export function Logo({ tone = 'dark', className }: { tone?: 'dark' | 'light'; className?: string }) {
   const light = tone === 'light';
   return (
-    <span className={cn('inline-flex items-center gap-3', className)}>
+    <span className={cn('inline-flex items-center gap-3 max-[399px]:gap-2.5', className)}>
       <span
         aria-hidden="true"
         className={cn(
-          'grid h-10 w-10 shrink-0 rotate-45 place-items-center border transition-colors duration-500',
+          'grid h-10 w-10 shrink-0 rotate-45 max-[399px]:h-9 max-[399px]:w-9 place-items-center border transition-colors duration-500',
           light ? 'border-gold-light/70' : 'border-gold-dark/60',
         )}
       >
@@ -27,7 +27,7 @@ export function Logo({ tone = 'dark', className }: { tone?: 'dark' | 'light'; cl
       <span className="flex flex-col leading-none">
         <span
           className={cn(
-            'font-serif text-[1.45rem] font-semibold tracking-[0.2em] transition-colors duration-500',
+            'font-serif text-[1.45rem] font-semibold tracking-[0.2em] transition-colors duration-500 max-[399px]:text-[1.25rem] max-[399px]:tracking-[0.15em]',
             light ? 'text-white' : 'text-ink',
           )}
         >
@@ -35,7 +35,7 @@ export function Logo({ tone = 'dark', className }: { tone?: 'dark' | 'light'; cl
         </span>{' '}
         <span
           className={cn(
-            'mt-1 text-[0.56rem] font-semibold tracking-[0.42em] transition-colors duration-500',
+            'mt-1 text-[0.56rem] font-semibold tracking-[0.42em] transition-colors duration-500 max-[399px]:tracking-[0.3em]',
             light ? 'text-white/65' : 'text-stone',
           )}
         >
