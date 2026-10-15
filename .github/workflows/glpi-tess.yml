@@ -1,0 +1,59 @@
+# Primeiro atendimento dos chamados do GLPI pela Tess AI, a cada 5 minutos.
+# Só funciona se o GLPI puder ser acessado pela internet. Se ele estiver só na rede interna,
+# rode o script no próprio servidor (veja integracoes/glpi-tess/README.md).
+# Fica desligado até a variável GLPI_API_URL ser criada no repositório.
+name: GLPI + Tess
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+    inputs:
+      chamado:
+        description: 'Processar só este chamado (ID). Vazio = chamados novos.'
+        required: false
+      simulacao:
+        description: 'Simulação: mostra as respostas sem publicar no GLPI'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: glpi-tess
+  cancel-in-progress: false
+
+jobs:
+  atender:
+    if: vars.GLPI_API_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Responder chamados novos
+        working-directory: integracoes/glpi-tess
+        env:
+          GLPI_API_URL: ${{ vars.GLPI_API_URL }}
+          GLPI_APP_TOKEN: ${{ secrets.GLPI_APP_TOKEN }}
+          GLPI_USER_TOKEN: ${{ secrets.GLPI_USER_TOKEN }}
+          TESS_API_KEY: ${{ secrets.TESS_API_KEY }}
+          TESS_AGENT_ID: ${{ vars.TESS_AGENT_ID }}
+          TESS_MODEL: ${{ vars.TESS_MODEL }}
+          TESS_TEMPERATURE: ${{ vars.TESS_TEMPERATURE }}
+          TESS_INSTRUCOES: ${{ vars.TESS_INSTRUCOES }}
+          JANELA_HORAS: ${{ vars.JANELA_HORAS }}
+          ACOMPANHAMENTO_PRIVADO: ${{ vars.ACOMPANHAMENTO_PRIVADO }}
+          DRY_RUN: ${{ inputs.simulacao && 'true' || vars.DRY_RUN }}
+          CHAMADO: ${{ inputs.chamado }}
+        run: |
+          if [ -n "$CHAMADO" ]; then
+            node index.mjs --chamado "$CHAMADO"
+          else
+            node index.mjs
+          fi

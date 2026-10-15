@@ -172,3 +172,7 @@ docs/                   guias (Google, Search Console, domínio, métricas)
 - Café da manhã (as tarifas de referência consultadas não o incluem)
 - História do hotel
 - Revisão dos textos de Política de Privacidade e Termos de Uso por um profissional jurídico
+
+## Integração GLPI + Tess AI
+
+A pasta [`integracoes/glpi-tess`](integracoes/glpi-tess/README.md) tem o script que faz o primeiro atendimento automático dos chamados novos do GLPI com um agente da Tess AI (independente do site).
