@@ -2,7 +2,7 @@ import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, CalendarCheck, ExternalLink, RotateCcw } from 'lucide-react';
 import { getRoom, rooms } from '@/data/rooms';
 import { useBooking } from '@/context/BookingContext';
-import { addDays, cn, toISODate } from '@/lib/utils';
+import { cn, toISODate } from '@/lib/utils';
 import {
   bookingConfig,
   bookingSummary,
@@ -13,6 +13,7 @@ import {
 } from '@/services/booking';
 import { Button, ButtonAnchor } from '@/components/ui/Button';
 import { Field, fieldAria } from '@/components/ui/Field';
+import { DateRangePicker } from './DateRangePicker';
 import { WhatsAppIcon } from '@/components/ui/Icon';
 
 interface BookingFormProps {
@@ -40,7 +41,7 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
   const [errors, setErrors] = useState<BookingErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
-  const checkInRef = useRef<HTMLInputElement>(null);
+  const checkInRef = useRef<HTMLButtonElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
   // Na barra da home, a acomodação é compartilhada com os cards ("Reservar").
@@ -75,11 +76,6 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
     if (submitted && today) setErrors(validateBooking(request, today));
     setResult(null);
   }, [checkIn, checkOut, guests, roomsCount, roomSlug, promoCode]);
-
-  const onCheckInChange = (value: string) => {
-    setCheckIn(value);
-    if (value && (!checkOut || checkOut <= value)) setCheckOut(addDays(value, 1));
-  };
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -122,29 +118,19 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
             : 'grid-cols-2',
         )}
       >
-        <Field id={fid('checkIn')} label="Check-in" error={errors.checkIn}>
-          <input
-            ref={checkInRef}
-            type="date"
-            className="field-input"
-            value={checkIn}
-            min={today || undefined}
-            onChange={(e) => onCheckInChange(e.target.value)}
-            required
-            {...fieldAria(fid('checkIn'), errors.checkIn)}
-          />
-        </Field>
-        <Field id={fid('checkOut')} label="Check-out" error={errors.checkOut}>
-          <input
-            type="date"
-            className="field-input"
-            value={checkOut}
-            min={checkIn ? addDays(checkIn, 1) : today || undefined}
-            onChange={(e) => setCheckOut(e.target.value)}
-            required
-            {...fieldAria(fid('checkOut'), errors.checkOut)}
-          />
-        </Field>
+        <DateRangePicker
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onChange={(inDate, outDate) => {
+            setCheckIn(inDate);
+            setCheckOut(outDate);
+          }}
+          min={today}
+          ids={{ checkIn: fid('checkIn'), checkOut: fid('checkOut') }}
+          errors={{ checkIn: errors.checkIn, checkOut: errors.checkOut }}
+          twoMonths={isBar}
+          checkInRef={checkInRef}
+        />
         <Field id={fid('guests')} label="Hóspedes" error={errors.guests}>
           <select
             className="field-input"
