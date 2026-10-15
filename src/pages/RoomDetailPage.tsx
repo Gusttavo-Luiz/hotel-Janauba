@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useParams } from 'react-router';
-import { BedDouble, CalendarClock, Check, Expand, Link2, Maximize2, PawPrint, Phone, Share2, ShieldCheck, Users } from 'lucide-react';
+import { Link, useParams } from 'react-router';
+import { ArrowLeft, ArrowRight, BedDouble, CalendarClock, Check, Expand, Link2, Maximize2, PawPrint, Phone, Share2, ShieldCheck, Users } from 'lucide-react';
 import { getAmenity } from '@/data/amenities';
 import { hotel } from '@/data/hotel';
 import { getRoom, priceDisclaimer, rooms } from '@/data/rooms';
@@ -53,6 +53,9 @@ export default function RoomDetailPage() {
   const photos = room.images.filter((img) => img.src || siteConfig.showPlaceholderLabels);
   const roomAmenities = room.amenityIds.map(getAmenity).filter((a) => a !== undefined);
   const others = rooms.filter((r) => r.slug !== room.slug);
+  const position = rooms.findIndex((r) => r.slug === room.slug);
+  const prev = rooms.at(position - 1);
+  const next = rooms.at(position + 1);
   const wa = whatsappUrl(`Olá! Gostaria de saber a disponibilidade do ${room.name} no ${hotel.name}.`);
 
   const facts = [
@@ -74,7 +77,28 @@ export default function RoomDetailPage() {
           { label: 'Acomodações', to: '/acomodacoes' },
           { label: room.name },
         ]}
-      />
+      >
+        <nav aria-label="Navegar entre as acomodações" className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm animate-fade-in [animation-delay:250ms]">
+          {position > 0 && prev && (
+            <Link to={`/acomodacoes/${prev.slug}`} className="group inline-flex items-center gap-2 text-white/75 transition-colors hover:text-gold-light">
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" aria-hidden="true" />
+              <span>
+                <span className="sr-only">Acomodação anterior: </span>
+                {prev.name}
+              </span>
+            </Link>
+          )}
+          {next && (
+            <Link to={`/acomodacoes/${next.slug}`} className="group inline-flex items-center gap-2 text-white/75 transition-colors hover:text-gold-light">
+              <span>
+                <span className="sr-only">Próxima acomodação: </span>
+                {next.name}
+              </span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            </Link>
+          )}
+        </nav>
+      </PageHero>
 
       {photos.length > 0 && (
         <section className="py-14 sm:py-20" aria-label={`Fotos do ${room.name}`}>

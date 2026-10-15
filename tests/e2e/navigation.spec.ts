@@ -48,6 +48,19 @@ test.describe('Navegação', () => {
     await expect(page.locator('main > div').first()).toHaveClass(/animate-page-in/);
   });
 
+  test('Anterior / Próximo percorrem os quartos em ordem', async ({ page }) => {
+    const nav = () => page.getByRole('navigation', { name: 'Navegar entre as acomodações' });
+    await page.goto('/acomodacoes/quarto-duplo');
+    await expect(nav().getByRole('link')).toHaveCount(1);
+    await nav().getByRole('link', { name: 'Próxima acomodação: Quarto Triplo' }).click();
+    await expect(page).toHaveURL(/\/acomodacoes\/quarto-triplo$/);
+    await expect(nav().getByRole('link', { name: 'Acomodação anterior: Quarto Duplo' })).toBeVisible();
+    await nav().getByRole('link', { name: 'Próxima acomodação: Quarto Família' }).click();
+    await expect(page).toHaveURL(/\/acomodacoes\/quarto-familia$/);
+    await expect(nav().getByRole('link')).toHaveCount(1);
+    await expect(nav().getByRole('link', { name: 'Acomodação anterior: Quarto Triplo' })).toBeVisible();
+  });
+
   test('endereço inexistente mostra a página 404', async ({ page }) => {
     await page.goto('/pagina-que-nao-existe');
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/não encontrada/i);
