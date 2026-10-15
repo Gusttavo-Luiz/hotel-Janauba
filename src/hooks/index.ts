@@ -71,3 +71,30 @@ export function useRevealOnScroll(dependency: unknown) {
     };
   }, [dependency]);
 }
+
+/** Chama `onDismiss` ao clicar fora de `ref` enquanto `active`. */
+export function useClickOutside(active: boolean, ref: React.RefObject<HTMLElement | null>, onDismiss: () => void) {
+  useEffect(() => {
+    if (!active) return;
+    const onDown = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) onDismiss();
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [active, ref, onDismiss]);
+}
+
+/**
+ * Enquanto `active`: tira as ações flutuantes da frente (ver .floating-actions no CSS)
+ * e rola a página para o painel aberto ficar inteiro na tela.
+ */
+export function useOverlayPanel(active: boolean, panelRef: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    if (!active) return;
+    document.documentElement.dataset.overlay = 'panel';
+    panelRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    return () => {
+      delete document.documentElement.dataset.overlay;
+    };
+  }, [active, panelRef]);
+}

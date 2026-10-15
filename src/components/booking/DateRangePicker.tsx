@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type Ref } from 'react';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useClickOutside, useEscape, useOverlayPanel } from '@/hooks';
 import { addDays, cn, nightsBetween, toISODate } from '@/lib/utils';
 import { Field, fieldAria } from '@/components/ui/Field';
 
@@ -97,25 +98,9 @@ export function DateRangePicker({ checkIn, checkOut, onChange, min, ids, errors,
     setPicking(which);
   };
 
-  // Fecha ao clicar fora
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (!wrapperRef.current?.contains(e.target as Node)) close();
-    };
-    document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
-  }, [open, close]);
-
-  // Enquanto aberto: esconde as ações flutuantes e garante o calendário inteiro na tela
-  useEffect(() => {
-    if (!open) return;
-    document.documentElement.dataset.overlay = 'calendar';
-    dialogRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    return () => {
-      delete document.documentElement.dataset.overlay;
-    };
-  }, [open]);
+  useClickOutside(open, wrapperRef, close);
+  useOverlayPanel(open, dialogRef);
+  useEscape(open, () => close(picking ?? 'checkIn'));
 
   // Move o foco do teclado para o dia ativo
   useEffect(() => {
@@ -166,13 +151,6 @@ export function DateRangePicker({ checkIn, checkOut, onChange, min, ids, errors,
     }
   };
 
-  const onPopoverKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation();
-      close(picking ?? 'checkIn');
-    }
-  };
-
   // Intervalo destacado: o escolhido, ou a prévia enquanto o mouse passa sobre os dias
   const rangeEnd = checkOut || (picking === 'checkOut' && hover > checkIn ? hover : '');
   const nights = checkIn && checkOut ? nightsBetween(checkIn, checkOut) : 0;
@@ -204,7 +182,7 @@ export function DateRangePicker({ checkIn, checkOut, onChange, min, ids, errors,
   );
 
   return (
-    <div ref={wrapperRef} className="relative col-span-2 grid grid-cols-2 gap-4" onKeyDown={onPopoverKeyDown}>
+    <div ref={wrapperRef} className="relative col-span-2 grid grid-cols-2 gap-4">
       {trigger('checkIn', 'Check-in', checkIn)}
       {trigger('checkOut', 'Check-out', checkOut)}
 
