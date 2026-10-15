@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /** Data ISO (AAAA-MM-DD) do dia `day` no mês seguinte ao atual. */
 export function nextMonthDate(day: number) {
@@ -16,7 +16,8 @@ export async function pickDates(page: Page, scope: Locator, inDay = 10, outDay =
   await calendar.getByRole('button', { name: 'Próximo mês' }).click();
   await calendar.locator(`button[data-date="${checkIn}"]`).first().click();
   await calendar.locator(`button[data-date="${checkOut}"]`).first().click();
-  await calendar.getByRole('button', { name: 'Confirmar' }).click();
+  // escolher o check-out fecha o calendário
+  await expect(calendar).toBeHidden();
   return { checkIn, checkOut };
 }
 

@@ -137,6 +137,18 @@ O hotel não informou um motor de reservas próprio. A busca "Ver disponibilidad
 
 Para integrar um motor de reservas no futuro, ajuste `src/services/booking.ts`. O campo de código promocional já existe e pode ser ativado em `bookingConfig.promoCodeEnabled`.
 
+## Testes
+
+Os testes de ponta a ponta (Playwright) abrem o site gerado pelo build num navegador de verdade, em tamanho de computador e de celular, e conferem os fluxos principais: consulta de disponibilidade (links do Booking.com e do WhatsApp, validações, capacidade dos quartos, estadia entre páginas), navegação (Voltar, foco, botões "Reservar", 404), contato, localização, perguntas frequentes, barra e menu do celular. Cada página também passa por uma checagem automática de acessibilidade (axe, WCAG 2.1 AA).
+
+```bash
+npm run build
+npx playwright install chromium   # só na primeira vez
+npm run test:e2e
+```
+
+No GitHub, o workflow **Testes** (`.github/workflows/testes.yml`) roda tudo a cada pull request e a cada push na `main`; se algo falhar, o relatório fica disponível nos artefatos da execução.
+
 ## Estrutura
 
 ```

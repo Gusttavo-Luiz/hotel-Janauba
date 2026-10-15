@@ -8,7 +8,8 @@ test.describe('Navegação', () => {
     const before = await page.evaluate(() => window.scrollY);
     expect(before).toBeGreaterThan(0);
 
-    await link.click();
+    // clique direto no elemento: o click() do Playwright rolaria de novo se a barra fixa do celular cobrisse o link
+    await link.evaluate((el: HTMLElement) => el.click());
     await expect(page).toHaveURL(/\/acomodacoes\/quarto-triplo$/);
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
 
