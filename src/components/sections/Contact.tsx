@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link } from 'react-router';
 import { CheckCircle2, Clock, Instagram, Loader2, Mail, MapPin, Phone, Send, XCircle } from 'lucide-react';
 import { fullAddress, hotel } from '@/data/hotel';
@@ -22,6 +22,35 @@ import { SectionHeading } from '@/components/ui/SectionHeading';
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
 const empty: ContactMessage = { name: '', email: '', phone: '', subject: '', message: '' };
+
+/** Rascunho da mensagem, guardado só neste navegador até o envio (ou o fim da sessão). */
+const DRAFT_KEY = 'hotel-premier:contato';
+
+function readDraft(): ContactMessage | null {
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as Record<string, unknown>;
+    const draft = { ...empty };
+    for (const key of Object.keys(empty) as (keyof ContactMessage)[]) {
+      if (typeof saved[key] === 'string') draft[key] = saved[key].slice(0, 2000);
+    }
+    if (draft.subject && !contactSubjects.includes(draft.subject)) draft.subject = '';
+    return draft;
+  } catch {
+    return null;
+  }
+}
+
+function writeDraft(data: ContactMessage) {
+  try {
+    const hasText = Object.values(data).some((v) => v.trim());
+    if (hasText) window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    else window.sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    /* armazenamento indisponível */
+  }
+}
 
 function ContactItem({
   icon,
@@ -70,6 +99,17 @@ export function Contact() {
   const [honeypot, setHoneypot] = useState('');
   const formRef = useRef<HTMLFormElement>(null);
   const wa = whatsappUrl();
+  const restored = useRef(false);
+
+  // Restaura o rascunho depois da hidratação; daí em diante, salva a cada alteração.
+  useEffect(() => {
+    const draft = readDraft();
+    if (draft) setData(draft);
+    restored.current = true;
+  }, []);
+  useEffect(() => {
+    if (restored.current) writeDraft(data);
+  }, [data]);
 
   const update = (field: keyof ContactMessage) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = field === 'phone' ? maskPhone(e.target.value) : e.target.value;
