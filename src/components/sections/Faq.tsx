@@ -1,9 +1,14 @@
-import { Plus } from 'lucide-react';
+import { Phone, Plus } from 'lucide-react';
 import { faq } from '@/data/content';
+import { hotel } from '@/data/hotel';
 import { cn } from '@/lib/utils';
+import { whatsappUrl } from '@/services/whatsapp';
+import { WhatsAppIcon } from '@/components/ui/Icon';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 
 export function Faq({ className, id = 'perguntas-frequentes' }: { className?: string; id?: string }) {
+  const wa = whatsappUrl('Olá! Tenho uma dúvida sobre a hospedagem no Hotel Premier Janaúba.');
+  const link = 'inline-flex items-center gap-2 font-semibold text-ink underline-offset-4 transition-colors hover:text-gold-dark hover:underline';
   return (
     <section id={id} aria-labelledby={`${id}-title`} className={cn('scroll-mt-20 py-24 sm:py-28', className)}>
       <div className="container-x grid gap-12 lg:grid-cols-12">
@@ -37,6 +42,17 @@ export function Faq({ className, id = 'perguntas-frequentes' }: { className?: st
               </li>
             ))}
           </ul>
+          <p className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted">
+            Não encontrou sua resposta? A recepção atende 24 horas.
+            {wa && (
+              <a href={wa} target="_blank" rel="noopener noreferrer" className={link}>
+                <WhatsAppIcon className="h-4 w-4 text-whatsapp" /> WhatsApp
+              </a>
+            )}
+            <a href={`tel:${hotel.contact.phoneE164}`} className={link}>
+              <Phone className="h-4 w-4 text-gold-dark" aria-hidden="true" /> {hotel.contact.phoneDisplay}
+            </a>
+          </p>
         </div>
       </div>
     </section>
