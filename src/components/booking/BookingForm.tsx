@@ -33,10 +33,6 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
   const isBar = variant === 'bar';
 
   const [today, setToday] = useState('');
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState(2);
-  const [roomsCount, setRoomsCount] = useState(1);
   const [promoCode, setPromoCode] = useState('');
   const [localRoom, setLocalRoom] = useState(fixedRoom ?? '');
   const [errors, setErrors] = useState<BookingErrors>({});
@@ -45,16 +41,20 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
   const checkInRef = useRef<HTMLButtonElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
 
+  // Datas e ocupação acompanham o visitante entre as páginas (BookingContext).
+  const { checkIn, checkOut, guests, rooms: roomsCount } = booking.stay;
+  const { updateStay } = booking;
+
   // Na barra da home, a acomodação é compartilhada com os cards ("Reservar").
   const roomSlug = fixedRoom ?? (isBar ? booking.roomSlug : localRoom);
-  const setRoomSlug = isBar && !fixedRoom ? booking.setRoomSlug : setLocalRoom;
+  const setRoomSlug = (slug: string) => {
+    if (isBar) return booking.setRoomSlug(slug);
+    setLocalRoom(slug);
+    const room = getRoom(slug);
+    if (room) updateStay({ guests: room.capacity, rooms: 1 });
+  };
 
   useEffect(() => setToday(toISODate(new Date())), []);
-
-  useEffect(() => {
-    const room = getRoom(roomSlug);
-    if (room) setGuests(room.capacity);
-  }, [roomSlug]);
 
   useEffect(() => {
     if (isBar && booking.focusSignal > 0) {
@@ -121,10 +121,7 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
         <DateRangePicker
           checkIn={checkIn}
           checkOut={checkOut}
-          onChange={(inDate, outDate) => {
-            setCheckIn(inDate);
-            setCheckOut(outDate);
-          }}
+          onChange={(inDate, outDate) => updateStay({ checkIn: inDate, checkOut: outDate })}
           min={today}
           ids={{ checkIn: fid('checkIn'), checkOut: fid('checkOut') }}
           errors={{ checkIn: errors.checkIn, checkOut: errors.checkOut }}
@@ -134,10 +131,7 @@ export function BookingForm({ variant = 'bar', fixedRoom }: BookingFormProps) {
         <GuestsPicker
           guests={guests}
           rooms={roomsCount}
-          onChange={(g, r) => {
-            setGuests(g);
-            setRoomsCount(r);
-          }}
+          onChange={(g, r) => updateStay({ guests: g, rooms: r })}
           maxGuests={bookingConfig.maxGuests}
           maxRooms={bookingConfig.maxRooms}
           roomSlug={roomSlug || undefined}
