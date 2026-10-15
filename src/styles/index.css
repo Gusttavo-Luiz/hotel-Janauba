@@ -154,3 +154,10 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Ações flutuantes saem da frente enquanto o calendário de datas está aberto */
+html[data-overlay] .floating-actions {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}

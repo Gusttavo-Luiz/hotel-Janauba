@@ -56,7 +56,7 @@ export function FloatingActions() {
     <>
       <div
         className={cn(
-          'pointer-events-none fixed right-4 z-40 flex flex-col items-end gap-3 transition-[bottom] duration-500 sm:right-6 md:bottom-6',
+          'floating-actions pointer-events-none fixed right-4 z-40 flex flex-col items-end gap-3 transition-[bottom] duration-500 sm:right-6 md:bottom-6',
           showBar ? 'bottom-24' : 'bottom-4',
         )}
       >
@@ -98,7 +98,7 @@ export function FloatingActions() {
         aria-hidden={!showBar}
         inert={!showBar}
         className={cn(
-          'fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink/95 pb-[env(safe-area-inset-bottom)] text-white backdrop-blur-md transition-transform duration-500 ease-[var(--ease-elegant)] md:hidden',
+          'floating-actions fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink/95 pb-[env(safe-area-inset-bottom)] text-white backdrop-blur-md transition-transform duration-500 ease-[var(--ease-elegant)] md:hidden',
           showBar ? 'translate-y-0' : 'translate-y-full',
         )}
       >
