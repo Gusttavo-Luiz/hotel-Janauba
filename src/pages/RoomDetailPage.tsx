@@ -11,6 +11,7 @@ import { BookingForm } from '@/components/booking/BookingForm';
 import { ButtonAnchor } from '@/components/ui/Button';
 import { Icon, WhatsAppIcon } from '@/components/ui/Icon';
 import { Media } from '@/components/ui/Media';
+import { RoomArt } from '@/components/ui/arts';
 import { Lightbox } from '@/components/sections/Lightbox';
 import { PageHero } from '@/components/sections/PageHero';
 import { RoomCard } from '@/components/sections/RoomCard';
@@ -69,6 +70,7 @@ export default function RoomDetailPage() {
         eyebrow="Acomodação"
         title={room.name}
         description={room.summary}
+        aside={photos.length === 0 ? <RoomArt room={room} tone="dark" /> : undefined}
         breadcrumbs={[
           { label: 'Início', to: '/' },
           { label: 'Acomodações', to: '/acomodacoes' },

@@ -9,10 +9,12 @@ interface PageHeroProps {
   description?: ReactNode;
   breadcrumbs?: { label: string; to?: string }[];
   children?: ReactNode;
+  /** Arte opcional ao lado do título (telas grandes). */
+  aside?: ReactNode;
 }
 
 /** Cabeçalho escuro das páginas internas (mantém o header transparente consistente). */
-export function PageHero({ eyebrow, title, description, breadcrumbs, children }: PageHeroProps) {
+export function PageHero({ eyebrow, title, description, breadcrumbs, children, aside }: PageHeroProps) {
   return (
     <section className="relative isolate overflow-hidden pt-36 pb-16 text-white sm:pt-44 sm:pb-20">
       <div className="absolute inset-0 -z-10">
@@ -39,14 +41,23 @@ export function PageHero({ eyebrow, title, description, breadcrumbs, children }:
             </ol>
           </nav>
         )}
-        <p className="eyebrow eyebrow-light animate-fade-in">{eyebrow}</p>
-        <h1 className="mt-5 max-w-4xl animate-slide-up text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-7xl">{title}</h1>
-        {description && (
-          <p className="mt-6 max-w-2xl animate-slide-up text-[1.02rem] leading-relaxed text-white/70 [animation-delay:150ms]">
-            {description}
-          </p>
-        )}
-        {children}
+        <div className={aside ? 'lg:grid lg:grid-cols-12 lg:items-center lg:gap-12' : undefined}>
+          <div className={aside ? 'lg:col-span-8' : undefined}>
+            <p className="eyebrow eyebrow-light animate-fade-in">{eyebrow}</p>
+            <h1 className="mt-5 max-w-4xl animate-slide-up text-[2.9rem] leading-[1.02] sm:text-6xl lg:text-7xl">{title}</h1>
+            {description && (
+              <p className="mt-6 max-w-2xl animate-slide-up text-[1.02rem] leading-relaxed text-white/70 [animation-delay:150ms]">
+                {description}
+              </p>
+            )}
+            {children}
+          </div>
+          {aside && (
+            <div className="relative hidden aspect-[4/3] animate-fade-in overflow-hidden rounded-2xl border border-white/10 bg-ink/80 backdrop-blur-sm [animation-delay:200ms] lg:col-span-4 lg:block">
+              {aside}
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
