@@ -111,13 +111,32 @@ function RouteEffects() {
   return null;
 }
 
+/**
+ * Envolve a página atual: a cada troca de rota a página entra com um fade curto.
+ * No primeiro carregamento não há animação (o HTML pré-renderizado aparece direto).
+ */
+function PageTransition() {
+  const { pathname } = useLocation();
+  const initialPath = useRef(pathname);
+  const navigated = useRef(false);
+  useEffect(() => {
+    if (pathname !== initialPath.current) navigated.current = true;
+  }, [pathname]);
+  const animate = navigated.current || pathname !== initialPath.current;
+  return (
+    <div key={pathname} className={animate ? 'animate-page-in' : undefined}>
+      <Outlet />
+    </div>
+  );
+}
+
 export function Layout() {
   return (
     <BookingProvider>
       <RouteEffects />
       <Header />
       <main id="conteudo" tabIndex={-1} className="outline-none">
-        <Outlet />
+        <PageTransition />
       </main>
       <Footer />
       <FloatingActions />
