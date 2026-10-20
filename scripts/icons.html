@@ -1,0 +1,56 @@
+<!doctype html>
+<!--
+  Fonte dos ícones do site (apple-touch-icon e ícones do manifest).
+  Para regerar: npm run icons (requer Playwright/Chromium instalado).
+  ?maskable → margem maior, para o recorte circular/arredondado do Android.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        font-weight: 600;
+        src: url('../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2') format('woff2');
+      }
+      html, body { margin: 0; height: 100%; }
+      body {
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(ellipse 70% 60% at 70% 20%, rgb(196 162 113 / 0.22), transparent 65%),
+          linear-gradient(160deg, #211e1a 0%, #171614 55%, #0d0c0b 100%);
+        --s: 46vw; /* lado do losango */
+      }
+      body.maskable { --s: 34vw; }
+      .diamond {
+        position: relative;
+        width: var(--s);
+        height: var(--s);
+        display: grid;
+        place-items: center;
+      }
+      .diamond::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: calc(var(--s) * 0.035) solid #c4a271;
+        transform: rotate(45deg);
+      }
+      .letter {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 600;
+        font-size: calc(var(--s) * 0.95);
+        line-height: 1;
+        color: #dcc59f;
+        transform: translateY(-3%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="diamond"><span class="letter">P</span></div>
+    <script>
+      if (location.search.includes('maskable')) document.body.classList.add('maskable');
+    </script>
+  </body>
+</html>
